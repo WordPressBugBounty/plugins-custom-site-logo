@@ -1,9 +1,9 @@
 /* Custom Site Logo Admin Page CSS */
 
 .error {
-    font-size: 16px;
-    font-style: italic;
-    font-weight: 600;
+	font-size: 16px;
+	font-style: italic;
+	font-weight: 600;
 }
 #csl_CustomSiteLogo_admin_hover_preview{
 	cursor: pointer;
@@ -20,7 +20,7 @@
 	padding: 10px 12px;
 }
 .csl-CustomSiteLogo-notice-block {
-    padding: 12px 12px;
-    font-size: 16px;
-    font-weight: 500;
+	padding: 12px 12px;
+	font-size: 16px;
+	font-weight: 500;
 }

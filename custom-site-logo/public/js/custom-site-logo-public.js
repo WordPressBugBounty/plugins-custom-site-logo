@@ -1,4 +1,10 @@
-(function( $ ) {
+/**
+ * Public-facing JavaScript for the Custom Site Logo plugin.
+ *
+ * @package Custom_Site_Logo
+ */
+
+(function ( $ ) {
 	'use strict';
 
 	/**

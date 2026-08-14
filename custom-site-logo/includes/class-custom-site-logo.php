@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The file that defines the core plugin class
  *
@@ -78,7 +77,6 @@ class Custom_Site_Logo {
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
-
 	}
 
 	/**
@@ -103,33 +101,32 @@ class Custom_Site_Logo {
 		 * The class responsible for orchestrating the actions and filters of the
 		 * core plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-custom-site-logo-loader.php';
+		require_once plugin_dir_path( __DIR__ ) . 'includes/class-custom-site-logo-loader.php';
 
 		/**
 		 * The class responsible for defining internationalization functionality
 		 * of the plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-custom-site-logo-i18n.php';
+		require_once plugin_dir_path( __DIR__ ) . 'includes/class-custom-site-logo-i18n.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-custom-site-logo-admin.php';
+		require_once plugin_dir_path( __DIR__ ) . 'admin/class-custom-site-logo-admin.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-custom-site-logo-public.php';
+		require_once plugin_dir_path( __DIR__ ) . 'public/class-custom-site-logo-public.php';
 
 		$this->loader = new Custom_Site_Logo_Loader();
-
 	}
 
 	/**
 	 * Define the locale for this plugin for internationalization.
 	 *
-	 * Uses the Custom_Site_Logo_i18n class in order to set the domain and to register the hook
+	 * Uses the Custom_Site_Logo_I18n class in order to set the domain and to register the hook
 	 * with WordPress.
 	 *
 	 * @since    1.0.0
@@ -137,10 +134,9 @@ class Custom_Site_Logo {
 	 */
 	private function set_locale() {
 
-		$plugin_i18n = new Custom_Site_Logo_i18n();
+		$plugin_i18n = new Custom_Site_Logo_I18n();
 
 		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
-
 	}
 
 	/**
@@ -156,7 +152,6 @@ class Custom_Site_Logo {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
-
 	}
 
 	/**
@@ -172,7 +167,6 @@ class Custom_Site_Logo {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-
 	}
 
 	/**
@@ -214,5 +208,4 @@ class Custom_Site_Logo {
 	public function get_version() {
 		return $this->version;
 	}
-
 }

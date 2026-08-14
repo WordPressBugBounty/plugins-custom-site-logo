@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The public-facing functionality of the plugin.
  *
@@ -44,13 +43,13 @@ class Custom_Site_Logo_Public {
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    1.0.0
-	 * @param      string    $plugin_name       The name of the plugin.
-	 * @param      string    $version    The version of this plugin.
+	 * @param      string $plugin_name       The name of the plugin.
+	 * @param      string $version    The version of this plugin.
 	 */
 	public function __construct( $plugin_name, $version ) {
 
 		$this->plugin_name = $plugin_name;
-		$this->version = $version;
+		$this->version     = $version;
 
 		$this->csl_add_partials_files();
 	}
@@ -65,7 +64,13 @@ class Custom_Site_Logo_Public {
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/custom-site-logo-public-shortcodes.php';
+		require_once plugin_dir_path( __DIR__ ) . 'public/partials/class-custom-site-logo-public-shortcodes.php';
+
+		/**
+		 * The function responsible for rendering the logo markup when called
+		 * directly from a theme template.
+		 */
+		require_once plugin_dir_path( __DIR__ ) . 'public/partials/custom-site-logo-public-functions.php';
 	}
 
 	/**
@@ -87,17 +92,17 @@ class Custom_Site_Logo_Public {
 		 * class.
 		 */
 
-		wp_enqueue_style( 
-			$this->plugin_name, 
-			plugin_dir_url( __FILE__ ) . 'css/custom-site-logo-public.css', 
-			array(), 
-			$this->version, 
-			'all' 
+		wp_enqueue_style(
+			$this->plugin_name,
+			plugin_dir_url( __FILE__ ) . 'css/custom-site-logo-public.css',
+			array(),
+			$this->version,
+			'all'
 		);
 
-		wp_enqueue_style( 
-			'csl_front_hover_css', 
-			plugins_url( 'css/hover-css/hover-min.css', __FILE__ ), 
+		wp_enqueue_style(
+			'csl_front_hover_css',
+			plugins_url( 'css/hover-css/hover-min.css', __FILE__ ),
 			array(),
 			'1.0',
 			'all'
@@ -123,14 +128,12 @@ class Custom_Site_Logo_Public {
 		 * class.
 		 */
 
-		wp_enqueue_script( 
-			$this->plugin_name, 
-			plugin_dir_url( __FILE__ ) . 'js/custom-site-logo-public.js', 
-			array( 'jquery' ), 
-			$this->version, 
-			false 
+		wp_enqueue_script(
+			$this->plugin_name,
+			plugin_dir_url( __FILE__ ) . 'js/custom-site-logo-public.js',
+			array( 'jquery' ),
+			$this->version,
+			false
 		);
-
 	}
-
 }

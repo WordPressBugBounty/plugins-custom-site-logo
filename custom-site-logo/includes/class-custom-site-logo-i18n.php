@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Define the internationalization functionality
  *
@@ -24,7 +23,7 @@
  * @subpackage Custom_Site_Logo/includes
  * @author     Awais Altaf <m.awaisaltaf@gmail.com>
  */
-class Custom_Site_Logo_i18n {
+class Custom_Site_Logo_I18n {
 
 
 	/**
@@ -39,9 +38,5 @@ class Custom_Site_Logo_i18n {
 			false,
 			dirname( dirname( plugin_basename( __FILE__ ) ) ) . '/languages/'
 		);
-
 	}
-
-
-
 }
