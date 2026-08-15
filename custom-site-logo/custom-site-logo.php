@@ -14,8 +14,8 @@
  * @wordpress-plugin
  * Plugin Name:       Custom Site Logo
  * Plugin URI:        https://wordpress.org/plugins/custom-site-logo/
- * Description:       Upload a custom logo, or reuse one from your media library, and display it anywhere via a template function or shortcode.
- * Version:           1.0.3
+ * Description:       Upload a custom logo, or reuse one from your media library, and display it anywhere via a template function, shortcode, block, or widget.
+ * Version:           1.2.0
  * Author:            Awais Altaf
  * Author URI:        https://profiles.wordpress.org/iticiti/
  * License:           GPL-2.0+
@@ -34,7 +34,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'CUSTOM_SITE_LOGO_VERSION', '1.0.3' );
+define( 'CUSTOM_SITE_LOGO_VERSION', '1.2.0' );
 
 /**
  * The code that runs during plugin activation.

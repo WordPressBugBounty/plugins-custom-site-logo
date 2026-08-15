@@ -1,26 +1,365 @@
 /* Custom Site Logo Admin Page CSS */
 
-.error {
+.csl-settings-wrap {
+	--csl-primary: #2271b1;
+	--csl-border: #dcdcde;
+	--csl-muted: #646970;
+	max-width: 900px;
+}
+
+/* Page header */
+.csl-page-header {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin: 18px 0 16px;
+}
+.csl-page-header .dashicons {
+	font-size: 30px;
+	width: 30px;
+	height: 30px;
+	color: var(--csl-primary);
+}
+.csl-page-header h1 {
+	margin: 0;
+	padding: 0;
+	font-size: 23px;
+	line-height: 1.3;
+}
+.csl-version-badge {
+	background: #f0f0f1;
+	color: var(--csl-muted);
+	border-radius: 999px;
+	padding: 3px 10px;
+	font-size: 12px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+/* Intro / help card */
+.csl-CustomSiteLogo-notice-block{
+	background: #fff;
+	border: 1px solid var(--csl-border);
+	border-left: 4px solid var(--csl-primary);
+	border-radius: 4px;
+	padding: 4px 18px;
+	margin-bottom: 20px;
+}
+.csl-CustomSiteLogo-notice-block p {
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 1.6;
+}
+.csl-CustomSiteLogo-notice-block code {
+	background: #f0f0f1;
+	padding: 2px 6px;
+	border-radius: 3px;
+}
+
+/* Tabs */
+.csl-nav-tab-wrapper{
+	margin-bottom: 0;
+}
+.csl-nav-tab-wrapper .nav-tab {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+}
+.csl-nav-tab-wrapper .nav-tab .dashicons {
 	font-size: 16px;
-	font-style: italic;
+	width: 16px;
+	height: 16px;
+}
+.csl-tab-content{
+	display: none;
+	background: #fff;
+	border: 1px solid var(--csl-border);
+	border-top: none;
+	padding: 8px 20px 4px;
+}
+.csl-tab-content.csl-tab-active{
+	display: block;
+}
+.csl-tab-content .form-table{
+	margin-top: 0;
+}
+.csl-tab-content .form-table th {
+	padding-left: 0;
 	font-weight: 600;
 }
-#csl_CustomSiteLogo_admin_hover_preview{
+.csl-save-button-wrap {
+	padding: 4px 20px 20px;
+	background: #fff;
+	border: 1px solid var(--csl-border);
+	border-top: none;
+	border-radius: 0 0 4px 4px;
+}
+.csl-save-button-wrap .button-primary {
+	padding: 4px 18px;
+	height: auto;
+}
+
+/* Image upload fields (logo/retina/dark/mobile) */
+.csl-image-field {
+	display: flex;
+	align-items: flex-start;
+	gap: 16px;
+}
+.csl-image-thumb {
+	flex: 0 0 auto;
+	width: 64px;
+	height: 64px;
+	border: 1px solid var(--csl-border);
+	border-radius: 4px;
+	background-color: #f6f7f7;
+	background-image:
+		linear-gradient(45deg, #eaeaea 25%, transparent 25%),
+		linear-gradient(-45deg, #eaeaea 25%, transparent 25%),
+		linear-gradient(45deg, transparent 75%, #eaeaea 75%),
+		linear-gradient(-45deg, transparent 75%, #eaeaea 75%);
+	background-size: 12px 12px;
+	background-position: 0 0, 0 6px, 6px -6px, -6px 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+}
+.csl-image-thumb img {
+	max-width: 100%;
+	max-height: 100%;
+	object-fit: contain;
+	display: block;
+}
+.csl-image-thumb .dashicons {
+	color: #c3c4c7;
+	font-size: 26px;
+	width: 26px;
+	height: 26px;
+}
+.csl-image-controls {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+.csl-image-controls .regular-text {
+	max-width: 380px;
+}
+.csl-image-buttons {
+	margin-top: 6px;
+	display: flex;
+	align-items: center;
+	gap: 14px;
+}
+.csl-image-buttons .button {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+}
+.csl-image-buttons .button .dashicons {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+	line-height: 1.5;
+}
+.csl-remove-image-button {
+	color: #b32d2e;
+	text-decoration: none;
+}
+.csl-remove-image-button:hover {
+	color: #b32d2e;
+	text-decoration: underline;
+}
+
+/* Toggle switches for checkbox (yes/no) fields */
+.csl-toggle-field {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
 	cursor: pointer;
+}
+.csl-toggle-field input[type="checkbox"] {
+	position: absolute;
+	opacity: 0;
+	width: 1px;
+	height: 1px;
+}
+.csl-toggle-switch {
+	position: relative;
+	display: inline-block;
+	width: 40px;
+	height: 22px;
+	background: #c3c4c7;
+	border-radius: 999px;
+	transition: background-color .15s ease-in-out;
+	flex: 0 0 auto;
+}
+.csl-toggle-switch::before {
+	content: "";
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	width: 18px;
+	height: 18px;
+	border-radius: 50%;
+	background: #fff;
+	transition: transform .15s ease-in-out;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, .3);
+}
+.csl-toggle-field input[type="checkbox"]:checked + .csl-toggle-switch {
+	background: var(--csl-primary);
+}
+.csl-toggle-field input[type="checkbox"]:checked + .csl-toggle-switch::before {
+	transform: translateX(18px);
+}
+.csl-toggle-field input[type="checkbox"]:focus-visible + .csl-toggle-switch {
+	box-shadow: 0 0 0 1px #fff, 0 0 0 3px var(--csl-primary);
+}
+
+/* Hover-effect preview */
+.csl-preview-blocks {
+	margin-top: 16px;
+	padding: 16px;
+	background: #f6f7f7;
+	border: 1px solid var(--csl-border);
+	border-radius: 4px;
+	text-align: center;
 }
 #csl-margi-btm{
 	margin-bottom: 10px;
+}
+#csl_CustomSiteLogo_admin_hover_preview{
+	cursor: pointer;
+	max-width: 150px;
+	max-height: 150px;
+	width: auto;
+	height: auto;
+	background-color: #fff;
+	padding: 10px;
+	border: 1px solid var(--csl-border);
+	border-radius: 4px;
 }
 .csl-error-logo-url{
 	display: none;
 }
 
-.csl-CustomSiteLogo-notice-block{
-	background: #fff;
-	padding: 10px 12px;
+/* Import / Export tab */
+.csl-import-export-grid {
+	display: flex;
+	gap: 20px;
+	flex-wrap: wrap;
+	margin: 16px 0 20px;
 }
-.csl-CustomSiteLogo-notice-block {
-	padding: 12px 12px;
+.csl-io-card {
+	flex: 1 1 260px;
+	background: #f6f7f7;
+	border: 1px solid var(--csl-border);
+	border-radius: 6px;
+	padding: 20px;
+}
+.csl-io-card h3 {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-top: 0;
+}
+.csl-io-card h3 .dashicons {
+	color: var(--csl-primary);
+}
+.csl-io-card .description {
+	margin-bottom: 16px;
+}
+.csl-io-card input[type="file"] {
+	display: block;
+	margin-bottom: 12px;
+	max-width: 100%;
+}
+
+/* Logo Maker tab */
+.csl-logo-maker-layout {
+	display: flex;
+	gap: 24px;
+	flex-wrap: wrap;
+	margin-top: 12px;
+}
+.csl-logo-maker-controls {
+	flex: 1 1 280px;
+	min-width: 260px;
+}
+.csl-logo-maker-controls p {
+	margin: 0 0 14px;
+}
+.csl-logo-maker-controls input[type="range"] {
+	width: 100%;
+	max-width: 320px;
+}
+.csl-logo-maker-colors {
+	display: flex;
+	gap: 20px;
+	align-items: center;
+	flex-wrap: wrap;
+}
+.csl-logo-maker-colors input[type="color"] {
+	width: 44px;
+	height: 32px;
+	padding: 2px;
+	cursor: pointer;
+}
+.csl-logo-maker-colors label {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-weight: 400;
+}
+#csl_logo_maker_generate {
+	display: inline-flex !important;
+	flex-direction: row !important;
+	align-items: center !important;
+	justify-content: center !important;
+	white-space: nowrap;
+	gap: 6px;
+}
+#csl_logo_maker_generate .dashicons {
+	width: 16px;
+	height: 16px;
 	font-size: 16px;
-	font-weight: 500;
+	line-height: 1;
+	flex-shrink: 0;
+}
+.csl-logo-maker-status {
+	margin-left: 10px;
+	color: var(--csl-muted);
+	font-style: italic;
+}
+.csl-logo-maker-status.csl-logo-maker-error {
+	color: #b32d2e;
+	font-style: normal;
+}
+.csl-logo-maker-preview {
+	flex: 1 1 320px;
+	min-width: 280px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: #f6f7f7;
+	background-image:
+		linear-gradient(45deg, #eaeaea 25%, transparent 25%),
+		linear-gradient(-45deg, #eaeaea 25%, transparent 25%),
+		linear-gradient(45deg, transparent 75%, #eaeaea 75%),
+		linear-gradient(-45deg, transparent 75%, #eaeaea 75%);
+	background-size: 16px 16px;
+	background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+	border: 1px solid var(--csl-border);
+	border-radius: 4px;
+	padding: 16px;
+}
+#csl_logo_maker_canvas {
+	width: 100%;
+	max-width: 400px;
+	height: auto;
+	display: block;
+}
+
+@media (max-width: 782px) {
+	.csl-image-field {
+		flex-direction: column;
+	}
 }

@@ -77,6 +77,9 @@ class Custom_Site_Logo {
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
+
+		// The Gutenberg block registers itself on `init` and is shared by both admin and front end.
+		new Custom_Site_Logo_Block();
 	}
 
 	/**
@@ -108,6 +111,17 @@ class Custom_Site_Logo {
 		 * of the plugin.
 		 */
 		require_once plugin_dir_path( __DIR__ ) . 'includes/class-custom-site-logo-i18n.php';
+
+		/**
+		 * The shared logo-resolution and markup-rendering logic used by the
+		 * shortcode, template tag, block, and widget.
+		 */
+		require_once plugin_dir_path( __DIR__ ) . 'includes/class-custom-site-logo-renderer.php';
+
+		/**
+		 * The class responsible for registering the Gutenberg block.
+		 */
+		require_once plugin_dir_path( __DIR__ ) . 'includes/class-custom-site-logo-block.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.

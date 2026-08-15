@@ -71,6 +71,17 @@ class Custom_Site_Logo_Public {
 		 * directly from a theme template.
 		 */
 		require_once plugin_dir_path( __DIR__ ) . 'public/partials/custom-site-logo-public-functions.php';
+
+		/**
+		 * The widget responsible for displaying the logo in a sidebar/widget area.
+		 */
+		require_once plugin_dir_path( __DIR__ ) . 'public/partials/class-custom-site-logo-widget.php';
+		add_action(
+			'widgets_init',
+			function () {
+				register_widget( 'Custom_Site_Logo_Widget' );
+			}
+		);
 	}
 
 	/**

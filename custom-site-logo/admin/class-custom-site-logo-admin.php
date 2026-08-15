@@ -71,26 +71,58 @@ class Custom_Site_Logo_Admin {
 		 */
 		require_once plugin_dir_path( __DIR__ ) .
 			'admin/partials/class-custom-site-logo-admin-menu.php';
+
+		/**
+		 * The class responsible for enabling safe SVG logo uploads.
+		 */
+		require_once plugin_dir_path( __DIR__ ) .
+			'admin/partials/class-custom-site-logo-svg-support.php';
+		new Custom_Site_Logo_Svg_Support();
+
+		/**
+		 * The class responsible for the per-page/post logo override meta box.
+		 */
+		require_once plugin_dir_path( __DIR__ ) .
+			'admin/partials/class-custom-site-logo-meta-box.php';
+		new Custom_Site_Logo_Meta_Box();
+
+		/**
+		 * The class responsible for the Customizer integration.
+		 */
+		require_once plugin_dir_path( __DIR__ ) .
+			'admin/partials/class-custom-site-logo-customizer.php';
+		new Custom_Site_Logo_Customizer();
+
+		/**
+		 * The class responsible for exporting/importing the plugin settings.
+		 */
+		require_once plugin_dir_path( __DIR__ ) .
+			'admin/partials/class-custom-site-logo-export-import.php';
+		new Custom_Site_Logo_Export_Import();
+
+		/**
+		 * The class responsible for the built-in text logo maker.
+		 */
+		require_once plugin_dir_path( __DIR__ ) .
+			'admin/partials/class-custom-site-logo-logo-maker.php';
+		new Custom_Site_Logo_Logo_Maker();
 	}
 
 	/**
 	 * Register the stylesheets for the admin area.
 	 *
+	 * Only loaded on this plugin's own settings screen so that they don't
+	 * clash with other admin pages (in particular, no unrelated styles are
+	 * loaded on top of the native Media Library modal).
+	 *
 	 * @since    1.0.0
+	 * @param    string $hook_suffix    The current admin page hook suffix.
 	 */
-	public function enqueue_styles() {
+	public function enqueue_styles( $hook_suffix = '' ) {
 
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Custom_Site_Logo_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Custom_Site_Logo_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
+		if ( 'appearance_page_custom-site-logo' !== $hook_suffix ) {
+			return;
+		}
 
 		wp_enqueue_style( 'csl_admin_css', plugins_url( 'css/custom-site-logo-admin.css', __FILE__ ), array(), '1.0', 'all' );
 
@@ -100,24 +132,24 @@ class Custom_Site_Logo_Admin {
 	/**
 	 * Register the JavaScript for the admin area.
 	 *
+	 * Only loaded on this plugin's own settings screen. Previously this ran
+	 * on every admin page and additionally enqueued the legacy `thickbox`
+	 * stylesheet, which is not used anywhere by this plugin (it relies
+	 * entirely on `wp.media()`). Loading `thickbox` globally overrides
+	 * styles used by the native Media Library modal (overlay/z-index/button
+	 * rules), which broke uploading via "Select Files" on other admin
+	 * screens such as the post editor and Media Library page.
+	 *
 	 * @since    1.0.0
+	 * @param    string $hook_suffix    The current admin page hook suffix.
 	 */
-	public function enqueue_scripts() {
+	public function enqueue_scripts( $hook_suffix = '' ) {
 
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Custom_Site_Logo_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Custom_Site_Logo_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
+		if ( 'appearance_page_custom-site-logo' !== $hook_suffix ) {
+			return;
+		}
 
 		wp_enqueue_media(); // Enables the media library button.
-		wp_enqueue_style( 'thickbox' );
 
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/custom-site-logo-admin.js', array( 'jquery' ), $this->version, false );
 	}

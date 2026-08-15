@@ -71,40 +71,33 @@ class Custom_Site_Logo_Admin_Settings {
 	}
 
 	/**
-	 * Register the setting section for this plugin.
+	 * The settings page's tabs, in display order.
 	 *
-	 * @since    1.0.0
+	 * Each tab maps to one Settings API section id. Shared here (rather than
+	 * only in csl_register_setting_section()) so that Custom_Site_Logo_Admin_Menu
+	 * can render the tab navigation and panels without duplicating this list.
+	 *
+	 * @since 1.2.0
+	 * @return array Associative array of section id => tab label.
 	 */
-	public function csl_register_setting_section() {
-		// Register a new section on the settings page.
-		add_settings_section(
-			'csl_section_developers',
-			__( 'Custom Site Logo Settings', 'custom-site-logo' ),
-			array( $this, 'csl_section_developers_function' ),
-			'custom-site-logo'
+	public static function get_tabs() {
+		return array(
+			'csl_section_general'  => __( 'General', 'custom-site-logo' ),
+			'csl_section_size'     => __( 'Size & Layout', 'custom-site-logo' ),
+			'csl_section_effects'  => __( 'Hover Effect', 'custom-site-logo' ),
+			'csl_section_advanced' => __( 'Advanced Logos', 'custom-site-logo' ),
 		);
 	}
 
 	/**
-	 * Render the introductory help text for the settings section.
+	 * Register the setting sections for this plugin, one per tab.
 	 *
 	 * @since    1.0.0
-	 * @param    array $args Arguments passed by add_settings_section(). Unused, kept for compatibility with the WordPress Settings API callback signature.
 	 */
-	public function csl_section_developers_function( $args ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found -- Required by the add_settings_section() callback signature.
-		?>
-		<!-- Setting Section -->
-		<div class="csl-CustomSiteLogo-notice-block">
-			<p>
-				<?php esc_html_e( 'To display the logo directly in your theme, add the following code where you want it to appear:', 'custom-site-logo' ); ?>
-				<code>&lt;?php echo csl_CustomSiteLogo_show_logo(); ?&gt;</code>
-			</p>
-			<p>
-				<?php esc_html_e( 'Alternatively, use the following shortcode in any post, page, or widget:', 'custom-site-logo' ); ?>
-				<code>[csl_display_logo]</code>
-			</p>
-		</div>
-		<?php
+	public function csl_register_setting_section() {
+		foreach ( self::get_tabs() as $section_id => $section_label ) {
+			add_settings_section( $section_id, $section_label, '__return_false', 'custom-site-logo' );
+		}
 	}
 
 	/**
@@ -119,22 +112,22 @@ class Custom_Site_Logo_Admin_Settings {
 			__( 'Logo Image', 'custom-site-logo' ),
 			array( $this, 'csl_image_field_callback_function' ),
 			'custom-site-logo',
-			'csl_section_developers',
+			'csl_section_general',
 			array(
 				'label_for' => 'csl_CustomSiteLogo_image_field',
 				'class'     => 'csl_CustomSiteLogo_row_image',
 			)
 		);
 
-		/* Logo Hover Effect Field */
+		/* Logo Custom URL Link Field */
 		add_settings_field(
-			'csl_CustomSiteLogo_hover_effect_field',
-			__( 'Hover Effect', 'custom-site-logo' ),
-			array( $this, 'csl_hover_effecr_field_callback_function' ),
+			'csl_CustomSiteLogo_custom_url_field',
+			__( 'Custom Logo Link', 'custom-site-logo' ),
+			array( $this, 'csl_custom_url_field_callback_function' ),
 			'custom-site-logo',
-			'csl_section_developers',
+			'csl_section_general',
 			array(
-				'label_for' => 'csl_CustomSiteLogo_hover_effect_field',
+				'label_for' => 'csl_CustomSiteLogo_custom_url_field',
 				'class'     => 'csl_CustomSiteLogo_row_custom_url',
 			)
 		);
@@ -145,7 +138,7 @@ class Custom_Site_Logo_Admin_Settings {
 			__( 'Logo Width', 'custom-site-logo' ),
 			array( $this, 'csl_width_field_callback_function' ),
 			'custom-site-logo',
-			'csl_section_developers',
+			'csl_section_size',
 			array(
 				'label_for' => 'csl_CustomSiteLogo_width_field',
 				'class'     => 'csl_CustomSiteLogo_row_width_field',
@@ -158,7 +151,7 @@ class Custom_Site_Logo_Admin_Settings {
 			__( 'Logo Height', 'custom-site-logo' ),
 			array( $this, 'csl_height_field_callback_function' ),
 			'custom-site-logo',
-			'csl_section_developers',
+			'csl_section_size',
 			array(
 				'label_for' => 'csl_CustomSiteLogo_height_field',
 				'class'     => 'csl_CustomSiteLogo_row_height_field',
@@ -171,7 +164,7 @@ class Custom_Site_Logo_Admin_Settings {
 			__( 'Center Logo', 'custom-site-logo' ),
 			array( $this, 'csl_image_center_field_callback_function' ),
 			'custom-site-logo',
-			'csl_section_developers',
+			'csl_section_size',
 			array(
 				'label_for' => 'csl_CustomSiteLogo_image_center_field',
 				'class'     => 'csl_CustomSiteLogo_row_image_center',
@@ -184,23 +177,75 @@ class Custom_Site_Logo_Admin_Settings {
 			__( 'Make Logo Responsive', 'custom-site-logo' ),
 			array( $this, 'csl_image_responsive_field_callback_function' ),
 			'custom-site-logo',
-			'csl_section_developers',
+			'csl_section_size',
 			array(
 				'label_for' => 'csl_CustomSiteLogo_image_responsive_field',
 				'class'     => 'csl_CustomSiteLogo_row_image_responsive',
 			)
 		);
 
-		/* Logo Custom URL Link Responsive Field */
+		/* Logo Hover Effect Field */
 		add_settings_field(
-			'csl_CustomSiteLogo_custom_url_field',
-			__( 'Custom Logo Link', 'custom-site-logo' ),
-			array( $this, 'csl_custom_url_field_callback_function' ),
+			'csl_CustomSiteLogo_hover_effect_field',
+			__( 'Hover Effect', 'custom-site-logo' ),
+			array( $this, 'csl_hover_effecr_field_callback_function' ),
 			'custom-site-logo',
-			'csl_section_developers',
+			'csl_section_effects',
 			array(
-				'label_for' => 'csl_CustomSiteLogo_custom_url_field',
+				'label_for' => 'csl_CustomSiteLogo_hover_effect_field',
 				'class'     => 'csl_CustomSiteLogo_row_custom_url',
+			)
+		);
+
+		/* Retina (@2x) Logo Image Field */
+		add_settings_field(
+			'csl_CustomSiteLogo_retina_image_field',
+			__( 'Retina (@2x) Logo', 'custom-site-logo' ),
+			array( $this, 'csl_retina_image_field_callback_function' ),
+			'custom-site-logo',
+			'csl_section_advanced',
+			array(
+				'label_for' => 'csl_CustomSiteLogo_retina_image_field',
+				'class'     => 'csl_CustomSiteLogo_row_retina_image',
+			)
+		);
+
+		/* Dark Mode Logo Image Field */
+		add_settings_field(
+			'csl_CustomSiteLogo_dark_image_field',
+			__( 'Dark Mode Logo', 'custom-site-logo' ),
+			array( $this, 'csl_dark_image_field_callback_function' ),
+			'custom-site-logo',
+			'csl_section_advanced',
+			array(
+				'label_for' => 'csl_CustomSiteLogo_dark_image_field',
+				'class'     => 'csl_CustomSiteLogo_row_dark_image',
+			)
+		);
+
+		/* Mobile Logo Image Field */
+		add_settings_field(
+			'csl_CustomSiteLogo_mobile_image_field',
+			__( 'Mobile Logo', 'custom-site-logo' ),
+			array( $this, 'csl_mobile_image_field_callback_function' ),
+			'custom-site-logo',
+			'csl_section_advanced',
+			array(
+				'label_for' => 'csl_CustomSiteLogo_mobile_image_field',
+				'class'     => 'csl_CustomSiteLogo_row_mobile_image',
+			)
+		);
+
+		/* Mobile Breakpoint Field */
+		add_settings_field(
+			'csl_CustomSiteLogo_mobile_breakpoint_field',
+			__( 'Mobile Breakpoint', 'custom-site-logo' ),
+			array( $this, 'csl_mobile_breakpoint_field_callback_function' ),
+			'custom-site-logo',
+			'csl_section_advanced',
+			array(
+				'label_for' => 'csl_CustomSiteLogo_mobile_breakpoint_field',
+				'class'     => 'csl_CustomSiteLogo_row_mobile_breakpoint',
 			)
 		);
 	}
@@ -213,15 +258,149 @@ class Custom_Site_Logo_Admin_Settings {
 	 */
 	public function csl_image_field_callback_function( $args ) {
 		$csl_options = get_option( 'csl_CustomSiteLogo_option_name' );
-		$field_value = ! empty( $csl_options[ $args['label_for'] ] ) ? $csl_options[ $args['label_for'] ] : '';
+		$field_value = ! empty( $csl_options[ $args['label_for'] ] ) && 'Select Logo' !== $csl_options[ $args['label_for'] ] ? $csl_options[ $args['label_for'] ] : '';
+		$this->render_image_field(
+			array(
+				'id'          => 'csl_CustomSiteLogo_logo_image',
+				'name'        => $args['label_for'],
+				'value'       => $field_value,
+				'placeholder' => __( 'Select Logo', 'custom-site-logo' ),
+				'description' => __( 'Enter an image URL, or select one from the media library.', 'custom-site-logo' ),
+			)
+		);
+	}
+
+	/**
+	 * Render a media-library-backed image field: thumbnail preview, text
+	 * input, "Media Library" button, and a "Remove" link (shared markup
+	 * used by the logo/retina/dark/mobile image fields).
+	 *
+	 * @since    1.2.0
+	 * @param    array $field {
+	 *     Field arguments.
+	 *
+	 *     @type string $id          The base id used for the input, button, and thumbnail elements.
+	 *     @type string $name        The option key (used to build the field's `name` attribute).
+	 *     @type string $value       The field's current value.
+	 *     @type string $placeholder Optional. Placeholder text for the input.
+	 *     @type string $description Optional. Help text shown below the field.
+	 * }.
+	 */
+	private function render_image_field( $field ) {
+		$field = wp_parse_args(
+			$field,
+			array(
+				'id'          => '',
+				'name'        => '',
+				'value'       => '',
+				'placeholder' => '',
+				'description' => '',
+			)
+		);
 		?>
-		<p>
-			<input id="csl_CustomSiteLogo_image_button" type="button" value="<?php esc_attr_e( 'Media Library', 'custom-site-logo' ); ?>" class="button-secondary" />
-			<input id="csl_CustomSiteLogo_logo_image" class="regular-text code" type="text"
-			name="csl_CustomSiteLogo_option_name[<?php echo esc_attr( $args['label_for'] ); ?>]"
-			value="<?php echo ! empty( $field_value ) ? esc_attr( $field_value ) : esc_attr__( 'Select Logo', 'custom-site-logo' ); ?>">
-		</p>
-		<p class="description"><?php esc_html_e( 'Enter an image URL, or select one from the media library.', 'custom-site-logo' ); ?></p>
+		<div class="csl-image-field">
+			<div class="csl-image-thumb" id="<?php echo esc_attr( $field['id'] ); ?>_thumb">
+				<?php if ( $field['value'] ) : ?>
+					<img src="<?php echo esc_url( $field['value'] ); ?>" alt="" />
+				<?php else : ?>
+					<span class="dashicons dashicons-format-image"></span>
+				<?php endif; ?>
+			</div>
+			<div class="csl-image-controls">
+				<input id="<?php echo esc_attr( $field['id'] ); ?>" class="regular-text code" type="text"
+					name="csl_CustomSiteLogo_option_name[<?php echo esc_attr( $field['name'] ); ?>]"
+					<?php
+					if ( $field['placeholder'] ) :
+						?>
+						placeholder="<?php echo esc_attr( $field['placeholder'] ); ?>"<?php endif; ?>
+					value="<?php echo esc_attr( $field['value'] ); ?>">
+				<div class="csl-image-buttons">
+					<button type="button" id="<?php echo esc_attr( $field['id'] ); ?>_button" class="button button-secondary">
+						<span class="dashicons dashicons-admin-media"></span> <?php esc_html_e( 'Media Library', 'custom-site-logo' ); ?>
+					</button>
+					<button type="button" class="button-link csl-remove-image-button" style="<?php echo $field['value'] ? '' : 'display:none;'; ?>">
+						<?php esc_html_e( 'Remove', 'custom-site-logo' ); ?>
+					</button>
+				</div>
+				<?php if ( $field['description'] ) : ?>
+					<p class="description"><?php echo esc_html( $field['description'] ); ?></p>
+				<?php endif; ?>
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Register the retina (@2x) image setting field.
+	 *
+	 * @since    1.2.0
+	 * @param    array $args Field arguments, including the `label_for` option name.
+	 */
+	public function csl_retina_image_field_callback_function( $args ) {
+		$csl_options = get_option( 'csl_CustomSiteLogo_option_name' );
+		$field_value = ! empty( $csl_options[ $args['label_for'] ] ) ? $csl_options[ $args['label_for'] ] : '';
+		$this->render_image_field(
+			array(
+				'id'          => 'csl_CustomSiteLogo_retina_image',
+				'name'        => $args['label_for'],
+				'value'       => $field_value,
+				'description' => __( 'Optional. A double-resolution (@2x) version of the logo, served to high-DPI/retina screens.', 'custom-site-logo' ),
+			)
+		);
+	}
+
+	/**
+	 * Register the dark-mode logo setting field.
+	 *
+	 * @since    1.2.0
+	 * @param    array $args Field arguments, including the `label_for` option name.
+	 */
+	public function csl_dark_image_field_callback_function( $args ) {
+		$csl_options = get_option( 'csl_CustomSiteLogo_option_name' );
+		$field_value = ! empty( $csl_options[ $args['label_for'] ] ) ? $csl_options[ $args['label_for'] ] : '';
+		$this->render_image_field(
+			array(
+				'id'          => 'csl_CustomSiteLogo_dark_image',
+				'name'        => $args['label_for'],
+				'value'       => $field_value,
+				'description' => __( 'Optional. An alternate logo automatically shown when the visitor\'s device/browser is set to dark mode.', 'custom-site-logo' ),
+			)
+		);
+	}
+
+	/**
+	 * Register the mobile logo setting field.
+	 *
+	 * @since    1.2.0
+	 * @param    array $args Field arguments, including the `label_for` option name.
+	 */
+	public function csl_mobile_image_field_callback_function( $args ) {
+		$csl_options = get_option( 'csl_CustomSiteLogo_option_name' );
+		$field_value = ! empty( $csl_options[ $args['label_for'] ] ) ? $csl_options[ $args['label_for'] ] : '';
+		$this->render_image_field(
+			array(
+				'id'          => 'csl_CustomSiteLogo_mobile_image',
+				'name'        => $args['label_for'],
+				'value'       => $field_value,
+				'description' => __( 'Optional. An alternate logo shown on small screens (see the breakpoint below).', 'custom-site-logo' ),
+			)
+		);
+	}
+
+	/**
+	 * Register the mobile breakpoint setting field.
+	 *
+	 * @since    1.2.0
+	 * @param    array $args Field arguments, including the `label_for` option name.
+	 */
+	public function csl_mobile_breakpoint_field_callback_function( $args ) {
+		$csl_options = get_option( 'csl_CustomSiteLogo_option_name' );
+		$field_value = ! empty( $csl_options[ $args['label_for'] ] ) ? $csl_options[ $args['label_for'] ] : Custom_Site_Logo_Renderer::DEFAULT_MOBILE_BREAKPOINT;
+		?>
+		<input id="csl_CustomSiteLogo_mobile_breakpoint" class="small-text" type="number" min="0"
+		name="csl_CustomSiteLogo_option_name[<?php echo esc_attr( $args['label_for'] ); ?>]"
+		value="<?php echo esc_attr( $field_value ); ?>"> px
+		<p class="description"><?php esc_html_e( 'The screen width at or below which the mobile logo is shown.', 'custom-site-logo' ); ?></p>
 		<?php
 	}
 
@@ -270,12 +449,25 @@ class Custom_Site_Logo_Admin_Settings {
 	public function csl_image_center_field_callback_function( $args ) {
 		$csl_options        = get_option( 'csl_CustomSiteLogo_option_name' );
 		$center_logo_option = isset( $csl_options[ $args['label_for'] ] ) ? $csl_options[ $args['label_for'] ] : 0;
+		$this->render_toggle_field( $args['label_for'], $center_logo_option, __( 'Center the logo horizontally.', 'custom-site-logo' ) );
+	}
+
+	/**
+	 * Render a checkbox field styled as a modern on/off toggle switch.
+	 *
+	 * @since    1.2.0
+	 * @param    string $field_id The option key/field id.
+	 * @param    mixed  $value    The field's current value.
+	 * @param    string $label    The label shown next to the switch.
+	 */
+	private function render_toggle_field( $field_id, $value, $label ) {
 		?>
-		<input type="checkbox" id="<?php echo esc_attr( $args['label_for'] ); ?>"
-		name="csl_CustomSiteLogo_option_name[<?php echo esc_attr( $args['label_for'] ); ?>]"
-		value="1" <?php checked( $center_logo_option, 1 ); ?> />
-		<label for="<?php echo esc_attr( $args['label_for'] ); ?>">
-			<?php esc_html_e( 'Center the logo horizontally.', 'custom-site-logo' ); ?>
+		<label class="csl-toggle-field" for="<?php echo esc_attr( $field_id ); ?>">
+			<input type="checkbox" id="<?php echo esc_attr( $field_id ); ?>"
+				name="csl_CustomSiteLogo_option_name[<?php echo esc_attr( $field_id ); ?>]"
+				value="1" <?php checked( $value, 1 ); ?> />
+			<span class="csl-toggle-switch" aria-hidden="true"></span>
+			<span><?php echo esc_html( $label ); ?></span>
 		</label>
 		<?php
 	}
@@ -289,13 +481,7 @@ class Custom_Site_Logo_Admin_Settings {
 	public function csl_image_responsive_field_callback_function( $args ) {
 		$csl_options            = get_option( 'csl_CustomSiteLogo_option_name' );
 		$responsive_logo_option = isset( $csl_options[ $args['label_for'] ] ) ? $csl_options[ $args['label_for'] ] : 0;
-		?>
-		<input type="checkbox" id="<?php echo esc_attr( $args['label_for'] ); ?>" name="csl_CustomSiteLogo_option_name[<?php echo esc_attr( $args['label_for'] ); ?>]"
-		value="1" <?php checked( $responsive_logo_option, 1 ); ?> />
-		<label for="<?php echo esc_attr( $args['label_for'] ); ?>">
-			<?php esc_html_e( 'Automatically scale the logo to fit its container on smaller screens.', 'custom-site-logo' ); ?>
-		</label>
-		<?php
+		$this->render_toggle_field( $args['label_for'], $responsive_logo_option, __( 'Automatically scale the logo to fit its container on smaller screens.', 'custom-site-logo' ) );
 	}
 
 	/**
