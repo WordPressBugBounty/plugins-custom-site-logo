@@ -4,7 +4,7 @@
  *
  * Lets an editor choose a different logo to display on a specific
  * post/page (e.g. a campaign landing page) than the site-wide default
- * configured in Appearance Â» Custom Site Logo.
+ * configured in Appearance » Custom Site Logo.
  *
  * @link       https://no-site.com
  * @since      1.2.0
@@ -107,7 +107,45 @@ class Custom_Site_Logo_Meta_Box {
 			<p><img id="csl_logo_override_preview" src="" style="max-width:100%;height:auto;display:none;" /></p>
 		<?php endif; ?>
 		<p class="description"><?php esc_html_e( 'Falls back to the site-wide logo when disabled or empty.', 'custom-site-logo' ); ?></p>
+
 		<?php
+		/*
+		 * The site-wide retina/dark/mobile variants belong to a different logo,
+		 * so they are not reused for an override. These fields let an override
+		 * keep high-DPI and dark-mode support with its own artwork.
+		 */
+		?>
+		<details class="csl-override-variants">
+			<summary><?php esc_html_e( 'Alternate versions of this logo', 'custom-site-logo' ); ?></summary>
+			<?php
+			foreach ( self::get_variant_fields() as $meta_key => $label ) :
+				$variant_value = get_post_meta( $post->ID, $meta_key, true );
+				?>
+				<p>
+					<label for="<?php echo esc_attr( $meta_key ); ?>"><strong><?php echo esc_html( $label ); ?></strong></label>
+					<input type="text" class="widefat csl-override-variant" id="<?php echo esc_attr( $meta_key ); ?>"
+						name="<?php echo esc_attr( $meta_key ); ?>" value="<?php echo esc_attr( $variant_value ); ?>"
+						placeholder="<?php esc_attr_e( 'No image selected', 'custom-site-logo' ); ?>" />
+					<button type="button" class="button csl-override-variant-button"><?php esc_html_e( 'Media Library', 'custom-site-logo' ); ?></button>
+				</p>
+			<?php endforeach; ?>
+			<p class="description"><?php esc_html_e( 'Optional. Leave empty to serve the override image to every device.', 'custom-site-logo' ); ?></p>
+		</details>
+		<?php
+	}
+
+	/**
+	 * The per-page variant fields, keyed by post meta key.
+	 *
+	 * @since 2.0.0
+	 * @return array Map of meta key => label.
+	 */
+	private static function get_variant_fields() {
+		return array(
+			'_csl_logo_override_retina' => __( 'Retina (@2x)', 'custom-site-logo' ),
+			'_csl_logo_override_dark'   => __( 'Dark mode', 'custom-site-logo' ),
+			'_csl_logo_override_mobile' => __( 'Mobile', 'custom-site-logo' ),
+		);
 	}
 
 	/**
@@ -134,6 +172,12 @@ class Custom_Site_Logo_Meta_Box {
 
 		if ( isset( $_POST['csl_logo_override_image'] ) ) {
 			update_post_meta( $post_id, '_csl_logo_override_image', esc_url_raw( wp_unslash( $_POST['csl_logo_override_image'] ) ) );
+		}
+
+		foreach ( array_keys( self::get_variant_fields() ) as $meta_key ) {
+			if ( isset( $_POST[ $meta_key ] ) ) {
+				update_post_meta( $post_id, $meta_key, esc_url_raw( wp_unslash( $_POST[ $meta_key ] ) ) );
+			}
 		}
 	}
 }

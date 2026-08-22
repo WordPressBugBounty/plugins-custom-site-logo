@@ -80,6 +80,11 @@ class Custom_Site_Logo {
 
 		// The Gutenberg block registers itself on `init` and is shared by both admin and front end.
 		new Custom_Site_Logo_Block();
+
+		// These are shared by both sides too: the login screen and REST API are neither strictly admin nor theme.
+		new Custom_Site_Logo_Head();
+		new Custom_Site_Logo_Locations();
+		new Custom_Site_Logo_Rest();
 	}
 
 	/**
@@ -113,6 +118,18 @@ class Custom_Site_Logo {
 		require_once plugin_dir_path( __DIR__ ) . 'includes/class-custom-site-logo-i18n.php';
 
 		/**
+		 * The single declaration of every setting, its default and its sanitizer.
+		 * Loaded before the renderer, which reads its settings through it.
+		 */
+		require_once plugin_dir_path( __DIR__ ) . 'includes/class-custom-site-logo-options.php';
+
+		/**
+		 * The class that decides which logo applies to the current request
+		 * (schedules, conditional rules, language, rotation).
+		 */
+		require_once plugin_dir_path( __DIR__ ) . 'includes/class-custom-site-logo-conditions.php';
+
+		/**
 		 * The shared logo-resolution and markup-rendering logic used by the
 		 * shortcode, template tag, block, and widget.
 		 */
@@ -122,6 +139,23 @@ class Custom_Site_Logo {
 		 * The class responsible for registering the Gutenberg block.
 		 */
 		require_once plugin_dir_path( __DIR__ ) . 'includes/class-custom-site-logo-block.php';
+
+		/**
+		 * The class responsible for the `<head>` output: preloading, structured
+		 * data and print styles.
+		 */
+		require_once plugin_dir_path( __DIR__ ) . 'includes/class-custom-site-logo-head.php';
+
+		/**
+		 * The class responsible for showing the logo in the theme's logo slot,
+		 * on the login screen, in the admin bar/footer and in WooCommerce emails.
+		 */
+		require_once plugin_dir_path( __DIR__ ) . 'includes/class-custom-site-logo-locations.php';
+
+		/**
+		 * The class responsible for the plugin's REST routes.
+		 */
+		require_once plugin_dir_path( __DIR__ ) . 'includes/class-custom-site-logo-rest.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.

@@ -28,3 +28,28 @@
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
+
+/*
+ * Option names are repeated as literals rather than read from the plugin's
+ * classes, because uninstall.php runs standalone with none of them loaded.
+ */
+delete_option( 'csl_CustomSiteLogo_option_name' );
+delete_option( 'csl_logo_click_stats' );
+delete_option( 'csl_onboarding_dismissed' );
+
+if ( is_multisite() ) {
+	delete_site_option( 'csl_network_default_logo' );
+}
+
+/* Per-page logo overrides. */
+$custom_site_logo_meta_keys = array(
+	'_csl_logo_override_enabled',
+	'_csl_logo_override_image',
+	'_csl_logo_override_retina',
+	'_csl_logo_override_dark',
+	'_csl_logo_override_mobile',
+);
+
+foreach ( $custom_site_logo_meta_keys as $custom_site_logo_meta_key ) {
+	delete_post_meta_by_key( $custom_site_logo_meta_key );
+}

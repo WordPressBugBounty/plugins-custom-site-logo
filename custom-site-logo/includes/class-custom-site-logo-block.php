@@ -55,7 +55,26 @@ class Custom_Site_Logo_Block {
 			array(
 				'editor_script'   => 'csl-logo-block-editor',
 				'render_callback' => array( $this, 'render_block' ),
-				'attributes'      => array(),
+				'attributes'      => array(
+					'variant' => array(
+						'type'    => 'string',
+						'default' => '',
+						'enum'    => array( '', 'dark', 'mobile', 'retina' ),
+					),
+					'align'   => array(
+						'type' => 'string',
+					),
+				),
+				'supports'        => array(
+					'html'    => false,
+					'align'   => array( 'left', 'center', 'right', 'wide', 'full' ),
+					'anchor'  => true,
+					/* Layout controls, so the logo can be spaced without extra CSS. */
+					'spacing' => array(
+						'margin'  => true,
+						'padding' => true,
+					),
+				),
 			)
 		);
 	}
@@ -64,9 +83,34 @@ class Custom_Site_Logo_Block {
 	 * Render the block on the front end.
 	 *
 	 * @since    1.2.0
+	 * @param    array $attributes The block's saved attributes.
 	 * @return   string The logo markup.
 	 */
-	public function render_block() {
-		return Custom_Site_Logo_Renderer::render( array( 'post_id' => get_the_ID() ) );
+	public function render_block( $attributes = array() ) {
+		$markup = Custom_Site_Logo_Renderer::render(
+			array(
+				'post_id' => get_the_ID(),
+				'variant' => isset( $attributes['variant'] ) ? $attributes['variant'] : '',
+			)
+		);
+
+		if ( '' === $markup ) {
+			return '';
+		}
+
+		/*
+		 * The alignment and spacing chosen in the editor arrive as classes and
+		 * inline styles on the block wrapper, so the markup has to be wrapped
+		 * for those controls to have any effect.
+		 */
+		if ( function_exists( 'get_block_wrapper_attributes' ) ) {
+			return sprintf(
+				'<div %1$s>%2$s</div>',
+				get_block_wrapper_attributes(),
+				$markup
+			);
+		}
+
+		return $markup;
 	}
 }

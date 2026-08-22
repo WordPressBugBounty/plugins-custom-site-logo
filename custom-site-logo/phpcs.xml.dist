@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<ruleset name="Custom Site Logo">
+
+	<description>WordPress Coding Standards ruleset for the Custom Site Logo plugin.</description>
+
+	<!--
+	Scanned by default when phpcs is run from the plugin root. WPCS 3.0 dropped
+	support for sniffing JS and CSS, so only PHP is checked here; JS and CSS are
+	linted with ESLint/Stylelint instead.
+	-->
+	<file>.</file>
+	<arg name="extensions" value="php"/>
+	<arg name="basepath" value="."/>
+	<arg name="colors"/>
+	<arg value="ps"/>
+	<arg name="parallel" value="8"/>
+
+	<!-- Third-party library, shipped as-is. -->
+	<exclude-pattern>*/hover-css/*</exclude-pattern>
+	<exclude-pattern>*/node_modules/*</exclude-pattern>
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+
+	<rule ref="WordPress"/>
+
+	<config name="minimum_wp_version" value="5.0"/>
+
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="custom-site-logo"/>
+			</property>
+		</properties>
+	</rule>
+
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array">
+				<element value="custom_site_logo"/>
+				<element value="Custom_Site_Logo"/>
+				<element value="CUSTOM_SITE_LOGO"/>
+			</property>
+		</properties>
+	</rule>
+
+</ruleset>

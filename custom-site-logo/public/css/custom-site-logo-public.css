@@ -7,3 +7,20 @@
 	box-shadow: none !important;
 	display: inline-block;
 }
+
+/* Sticky logo: the transform is animated so the shrink reads as a transition
+   rather than a jump. transform-origin keeps it anchored to the header edge. */
+.csl-logo-block--sticky .csl-customsite-logo{
+	transition: transform 0.25s ease;
+	transform-origin: left center;
+	will-change: transform;
+}
+.csl-logo-block--sticky[style*="center"] .csl-customsite-logo{
+	transform-origin: center center;
+}
+
+@media (prefers-reduced-motion: reduce){
+	.csl-logo-block--sticky .csl-customsite-logo{
+		transition: none;
+	}
+}

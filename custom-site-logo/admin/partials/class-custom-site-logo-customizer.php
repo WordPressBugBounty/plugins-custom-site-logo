@@ -2,7 +2,7 @@
 /**
  * Customizer integration for the plugin.
  *
- * Adds an "Custom Site Logo" section to Appearance Â» Customize, wired to
+ * Adds an "Custom Site Logo" section to Appearance » Customize, wired to
  * the very same `csl_CustomSiteLogo_option_name` option used by the classic
  * settings page (using WordPress's native `option_name[key]` setting id
  * syntax), so both stay perfectly in sync. Where possible, changes are

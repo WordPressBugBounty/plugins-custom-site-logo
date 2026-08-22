@@ -14,8 +14,10 @@
  * @wordpress-plugin
  * Plugin Name:       Custom Site Logo
  * Plugin URI:        https://wordpress.org/plugins/custom-site-logo/
- * Description:       Upload a custom logo, or reuse one from your media library, and display it anywhere via a template function, shortcode, block, or widget.
- * Version:           1.2.0
+ * Description:       Show your logo anywhere: theme header, login screen, admin bar and emails. Retina, dark mode, mobile, sticky, scheduled and per-page logos.
+ * Version:           2.0.0
+ * Requires at least: 5.0
+ * Requires PHP:      5.6
  * Author:            Awais Altaf
  * Author URI:        https://profiles.wordpress.org/iticiti/
  * License:           GPL-2.0+
@@ -34,13 +36,13 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'CUSTOM_SITE_LOGO_VERSION', '1.2.0' );
+define( 'CUSTOM_SITE_LOGO_VERSION', '2.0.0' );
 
 /**
  * The code that runs during plugin activation.
  * This action is documented in includes/class-custom-site-logo-activator.php
  */
-function activate_custom_site_logo() {
+function custom_site_logo_activate() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-custom-site-logo-activator.php';
 	Custom_Site_Logo_Activator::activate();
 }
@@ -49,13 +51,13 @@ function activate_custom_site_logo() {
  * The code that runs during plugin deactivation.
  * This action is documented in includes/class-custom-site-logo-deactivator.php
  */
-function deactivate_custom_site_logo() {
+function custom_site_logo_deactivate() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-custom-site-logo-deactivator.php';
 	Custom_Site_Logo_Deactivator::deactivate();
 }
 
-register_activation_hook( __FILE__, 'activate_custom_site_logo' );
-register_deactivation_hook( __FILE__, 'deactivate_custom_site_logo' );
+register_activation_hook( __FILE__, 'custom_site_logo_activate' );
+register_deactivation_hook( __FILE__, 'custom_site_logo_deactivate' );
 
 /**
  * The core plugin class that is used to define internationalization,
@@ -72,9 +74,9 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-custom-site-logo.php';
  *
  * @since    1.0.0
  */
-function run_custom_site_logo() {
+function custom_site_logo_run() {
 
 	$plugin = new Custom_Site_Logo();
 	$plugin->run();
 }
-run_custom_site_logo();
+custom_site_logo_run();

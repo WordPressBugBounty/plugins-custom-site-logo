@@ -20,7 +20,7 @@
  *                        `<?php csl_CustomSiteLogo_show_logo(); ?>`) or return it. Default true.
  * @return string|void The logo markup when `$do_echo` is false, otherwise void.
  */
-function csl_CustomSiteLogo_show_logo( $do_echo = true ) { // phpcs:ignore WordPress.NamingConventions.ValidFunctionName.FunctionNameInvalid -- Kept for backwards compatibility, this function is documented and called directly by end users in their theme templates.
+function csl_CustomSiteLogo_show_logo( $do_echo = true ) { // phpcs:ignore WordPress.NamingConventions.ValidFunctionName.FunctionNameInvalid, WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Documented public template tag called directly from theme templates; renaming it would break every site already using it.
 	$markup = Custom_Site_Logo_Renderer::render( array( 'post_id' => get_the_ID() ) );
 
 	if ( ! $do_echo ) {

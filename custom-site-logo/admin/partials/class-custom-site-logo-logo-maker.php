@@ -104,7 +104,7 @@ class Custom_Site_Logo_Logo_Maker {
 				'nonce'       => wp_create_nonce( 'wp_rest' ),
 				'defaultText' => get_bloginfo( 'name' ),
 				'i18n'        => array(
-					'uploading' => __( 'Generating and uploading your logoâ€¦', 'custom-site-logo' ),
+					'uploading' => __( 'Generating and uploading your logo…', 'custom-site-logo' ),
 					'success'   => __( 'Logo created! It has been set below. Click "Save Settings" on the General tab to apply it.', 'custom-site-logo' ),
 					'error'     => __( 'Something went wrong while uploading the generated logo. Please try again.', 'custom-site-logo' ),
 					'noText'    => __( 'Please enter some text for your logo first.', 'custom-site-logo' ),
@@ -122,7 +122,7 @@ class Custom_Site_Logo_Logo_Maker {
 		$fonts = $this->get_fonts();
 		?>
 		<div class="csl-logo-maker">
-			<p class="description"><?php esc_html_e( 'Don\'t have a logo yet? Create a simple text logo right here â€” it will be uploaded to your Media Library and set as your site logo automatically.', 'custom-site-logo' ); ?></p>
+			<p class="description"><?php esc_html_e( 'Don\'t have a logo yet? Create a simple text logo right here — it will be uploaded to your Media Library and set as your site logo automatically.', 'custom-site-logo' ); ?></p>
 
 			<div class="csl-logo-maker-layout">
 				<div class="csl-logo-maker-controls">

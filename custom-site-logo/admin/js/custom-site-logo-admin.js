@@ -13,7 +13,7 @@ jQuery( document ).ready(
 		/* ---------------------------------------------------------------
 		 * Settings page tabs.
 		 * ------------------------------------------------------------- */
-		var $csl_tabs           = $( '.csl-nav-tab-wrapper .nav-tab' );
+		var $csl_tabs           = $( '.csl-tab-nav-item' );
 		var $csl_tab_panels     = $( '.csl-tab-content' );
 		var $csl_save_button    = $( '.csl-save-button-wrap' );
 		var csl_tab_storage_key = 'csl_active_settings_tab';
@@ -23,8 +23,8 @@ jQuery( document ).ready(
 				tabId = $csl_tabs.first().data( 'tab' );
 			}
 
-			$csl_tabs.removeClass( 'nav-tab-active' );
-			$csl_tabs.filter( '[data-tab="' + tabId + '"]' ).addClass( 'nav-tab-active' );
+			$csl_tabs.removeClass( 'is-active' ).attr( 'aria-selected', 'false' );
+			$csl_tabs.filter( '[data-tab="' + tabId + '"]' ).addClass( 'is-active' ).attr( 'aria-selected', 'true' );
 
 			$csl_tab_panels.removeClass( 'csl-tab-active' );
 			$csl_tab_panels.filter( '[data-tab="' + tabId + '"]' ).addClass( 'csl-tab-active' );
@@ -77,37 +77,48 @@ jQuery( document ).ready(
 		}
 
 		/**
-		 * Wire up one "Media Library" button + its text field + thumbnail + remove link.
+		 * Open the media library and hand the chosen attachment to a callback.
 		 */
-		function csl_bind_image_field( buttonId, fieldId, thumbId, title ) {
-			var $field = $( fieldId );
-			var $thumb = $( thumbId );
-
-			$( buttonId ).on(
-				'click',
-				function (e) {
-					e.preventDefault();
-					var uploader = wp.media(
-						{
-							title: title,
-							button: { text: 'Select Image' },
-							multiple: false
-						}
-					).on(
-						'select',
-						function () {
-							var attachment = uploader.state().get( 'selection' ).first().toJSON();
-							$field.val( attachment.url ).trigger( 'change' );
-							csl_update_thumb( $thumb, attachment.url );
-							$thumb.closest( '.csl-image-field' ).find( '.csl-remove-image-button' ).show();
-						}
-					).open();
+		function csl_open_media( title, onSelect ) {
+			var uploader = wp.media(
+				{
+					title: title,
+					button: { text: 'Select Image' },
+					multiple: false
 				}
-			);
+			).on(
+				'select',
+				function () {
+					onSelect( uploader.state().get( 'selection' ).first().toJSON() );
+				}
+			).open();
 		}
 
-		$( '.csl-remove-image-button' ).on(
+		/*
+		 * Delegated so that every image field works, including the ones added by
+		 * the newer settings tabs and any repeater row cloned after page load.
+		 */
+		$( document ).on(
 			'click',
+			'.csl-image-field .csl-media-button',
+			function (e) {
+				e.preventDefault();
+				var $wrap = $( this ).closest( '.csl-image-field' );
+
+				csl_open_media(
+					'Select or upload an image',
+					function ( attachment ) {
+						$wrap.find( 'input[type="text"]' ).val( attachment.url ).trigger( 'change' );
+						csl_update_thumb( $wrap.find( '.csl-image-thumb' ), attachment.url );
+						$wrap.find( '.csl-remove-image-button' ).show();
+					}
+				);
+			}
+		);
+
+		$( document ).on(
+			'click',
+			'.csl-remove-image-button',
 			function (e) {
 				e.preventDefault();
 				var $button = $( this );
@@ -119,10 +130,62 @@ jQuery( document ).ready(
 			}
 		);
 
-		csl_bind_image_field( '#csl_CustomSiteLogo_logo_image_button', '#csl_CustomSiteLogo_logo_image', '#csl_CustomSiteLogo_logo_image_thumb', 'Select or upload a logo' );
-		csl_bind_image_field( '#csl_CustomSiteLogo_retina_image_button', '#csl_CustomSiteLogo_retina_image', '#csl_CustomSiteLogo_retina_image_thumb', 'Select or upload a retina (@2x) logo' );
-		csl_bind_image_field( '#csl_CustomSiteLogo_dark_image_button', '#csl_CustomSiteLogo_dark_image', '#csl_CustomSiteLogo_dark_image_thumb', 'Select or upload a dark mode logo' );
-		csl_bind_image_field( '#csl_CustomSiteLogo_mobile_image_button', '#csl_CustomSiteLogo_mobile_image', '#csl_CustomSiteLogo_mobile_image_thumb', 'Select or upload a mobile logo' );
+		/* ---------------------------------------------------------------
+		 * Repeatable rows (scheduled, conditional, per-language and
+		 * rotating logos).
+		 * ------------------------------------------------------------- */
+
+		$( document ).on(
+			'click',
+			'.csl-repeater-add',
+			function (e) {
+				e.preventDefault();
+
+				var $repeater = $( this ).closest( '.csl-repeater' );
+				var $rows     = $repeater.find( '.csl-repeater-rows' );
+				var template  = $repeater.find( '.csl-repeater-template' ).html();
+
+				if ( ! template ) {
+					return;
+				}
+
+				/*
+				 * Rows are indexed by position in the submitted array, so a fresh
+				 * index only has to avoid colliding with the rows already present.
+				 */
+				var nextIndex = $rows.children( '.csl-repeater-row' ).length;
+				while ( $rows.find( '[name*="[' + nextIndex + ']["]' ).length ) {
+					nextIndex++;
+				}
+
+				$rows.append( template.replace( /__INDEX__/g, nextIndex ) );
+			}
+		);
+
+		$( document ).on(
+			'click',
+			'.csl-repeater-remove',
+			function (e) {
+				e.preventDefault();
+				$( this ).closest( '.csl-repeater-row' ).remove();
+			}
+		);
+
+		$( document ).on(
+			'click',
+			'.csl-repeater-media',
+			function (e) {
+				e.preventDefault();
+				var $input = $( this ).closest( '.csl-repeater-image' ).find( '.csl-repeater-image-input' );
+
+				csl_open_media(
+					'Select or upload an image',
+					function ( attachment ) {
+						$input.val( attachment.url ).trigger( 'change' );
+					}
+				);
+			}
+		);
 
 		/* Keep the main logo's hover-effect preview (on the "Hover Effect" tab) in sync too. */
 		$( '#csl_CustomSiteLogo_logo_image' ).on(
@@ -165,19 +228,6 @@ jQuery( document ).ready(
 				var selectedHover = $( '#csl_CustomSiteLogo_hover_effect' ).val();
 				$( '#csl_CustomSiteLogo_admin_hover_preview' ).removeClass();
 				$( '#csl_CustomSiteLogo_admin_hover_preview' ).addClass( selectedHover );
-			}
-		);
-
-		/* Check Image Field */
-		$( '.csl_CustomSiteLogo_form' ).on(
-			'submit',
-			function () {
-				var csl_CustomSiteLogo_logo_image = $( 'input#csl_CustomSiteLogo_logo_image' ).attr( 'value' ); // Getting the logo image value.
-
-				if ((csl_CustomSiteLogo_logo_image === '' || csl_CustomSiteLogo_logo_image === null)) {
-					alert( "Please select the img." );
-					return false;
-				}
 			}
 		);
 

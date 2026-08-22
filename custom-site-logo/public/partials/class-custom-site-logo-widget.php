@@ -27,7 +27,7 @@ class Custom_Site_Logo_Widget extends WP_Widget {
 			'csl_logo_widget',
 			__( 'Custom Site Logo', 'custom-site-logo' ),
 			array(
-				'description' => __( 'Displays the logo configured in Appearance Â» Custom Site Logo.', 'custom-site-logo' ),
+				'description' => __( 'Displays the logo configured in Appearance » Custom Site Logo.', 'custom-site-logo' ),
 			)
 		);
 	}

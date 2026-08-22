@@ -106,6 +106,20 @@ class Custom_Site_Logo_Admin {
 		require_once plugin_dir_path( __DIR__ ) .
 			'admin/partials/class-custom-site-logo-logo-maker.php';
 		new Custom_Site_Logo_Logo_Maker();
+
+		/**
+		 * The class responsible for the first-run welcome notice.
+		 */
+		require_once plugin_dir_path( __DIR__ ) .
+			'admin/partials/class-custom-site-logo-onboarding.php';
+		new Custom_Site_Logo_Onboarding();
+
+		/**
+		 * The class responsible for the network-wide default logo on multisite.
+		 */
+		require_once plugin_dir_path( __DIR__ ) .
+			'admin/partials/class-custom-site-logo-network-settings.php';
+		new Custom_Site_Logo_Network_Settings();
 	}
 
 	/**

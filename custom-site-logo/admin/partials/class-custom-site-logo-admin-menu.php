@@ -107,12 +107,16 @@ class Custom_Site_Logo_Admin_Menu {
 		);
 
 		$tab_icons = array(
-			'csl_logo_maker'       => 'dashicons-edit',
-			'csl_section_general'  => 'dashicons-format-image',
-			'csl_section_size'     => 'dashicons-editor-expand',
-			'csl_section_effects'  => 'dashicons-art',
-			'csl_section_advanced' => 'dashicons-images-alt2',
-			'csl_import_export'    => 'dashicons-migrate',
+			'csl_logo_maker'        => 'dashicons-edit',
+			'csl_section_general'   => 'dashicons-format-image',
+			'csl_section_size'      => 'dashicons-editor-expand',
+			'csl_section_effects'   => 'dashicons-art',
+			'csl_section_advanced'  => 'dashicons-images-alt2',
+			'csl_section_sticky'    => 'dashicons-admin-page',
+			'csl_section_locations' => 'dashicons-location-alt',
+			'csl_section_rules'     => 'dashicons-calendar-alt',
+			'csl_section_seo'       => 'dashicons-performance',
+			'csl_import_export'     => 'dashicons-migrate',
 		);
 		?>
 		<div class="wrap csl-settings-wrap">
@@ -133,83 +137,99 @@ class Custom_Site_Logo_Admin_Menu {
 			<?php endif; ?>
 		</div>
 
-		<div class="csl-CustomSiteLogo-notice-block">
+		<details class="csl-CustomSiteLogo-notice-block">
+			<summary><?php esc_html_e( 'How do I display my logo?', 'custom-site-logo' ); ?></summary>
 			<p>
-				<?php esc_html_e( 'To display the logo directly in your theme, add the following code where you want it to appear:', 'custom-site-logo' ); ?>
-				<code>&lt;?php csl_CustomSiteLogo_show_logo(); ?&gt;</code>
+				<?php esc_html_e( 'The easiest way is to turn on "Replace Theme Logo" under Display Locations, which fills your theme\'s own logo slot with no code at all.', 'custom-site-logo' ); ?>
 			</p>
 			<p>
-				<?php esc_html_e( 'Alternatively, use the shortcode in any post, page, or classic widget:', 'custom-site-logo' ); ?>
+				<?php esc_html_e( 'To place it yourself, add the "Custom Site Logo" block in the block editor, the matching widget in a sidebar, or this shortcode in any post or page:', 'custom-site-logo' ); ?>
 				<code>[csl_display_logo]</code>
 			</p>
 			<p>
-				<?php esc_html_e( 'You can also add the "Custom Site Logo" block in the block editor, or the "Custom Site Logo" widget in a sidebar.', 'custom-site-logo' ); ?>
+				<?php esc_html_e( 'In a theme template, call it directly:', 'custom-site-logo' ); ?>
+				<code>&lt;?php csl_CustomSiteLogo_show_logo(); ?&gt;</code>
 			</p>
-		</div>
+		</details>
 
-		<h2 class="nav-tab-wrapper csl-nav-tab-wrapper">
-			<?php foreach ( $tabs as $tab_id => $tab_label ) : ?>
-				<a href="#<?php echo esc_attr( $tab_id ); ?>" class="nav-tab" data-tab="<?php echo esc_attr( $tab_id ); ?>">
-					<span class="dashicons <?php echo esc_attr( isset( $tab_icons[ $tab_id ] ) ? $tab_icons[ $tab_id ] : 'dashicons-admin-generic' ); ?>"></span>
-					<?php echo esc_html( $tab_label ); ?>
-				</a>
-			<?php endforeach; ?>
-		</h2>
+		<div class="csl-layout">
 
-		<form action="options.php" method="post" class="csl_CustomSiteLogo_form" >
-		<!-- Display Settings Here -->
-		<?php
+			<nav class="csl-tab-nav" role="tablist" aria-label="<?php esc_attr_e( 'Custom Site Logo settings sections', 'custom-site-logo' ); ?>">
+				<?php foreach ( $tabs as $tab_id => $tab_label ) : ?>
+					<a href="#<?php echo esc_attr( $tab_id ); ?>-panel" id="<?php echo esc_attr( $tab_id ); ?>"
+						class="csl-tab-nav-item" data-tab="<?php echo esc_attr( $tab_id ); ?>"
+						role="tab" aria-selected="false" aria-controls="<?php echo esc_attr( $tab_id ); ?>-panel">
+						<span class="dashicons <?php echo esc_attr( isset( $tab_icons[ $tab_id ] ) ? $tab_icons[ $tab_id ] : 'dashicons-admin-generic' ); ?>"></span>
+						<span class="csl-tab-nav-label"><?php echo esc_html( $tab_label ); ?></span>
+					</a>
+				<?php endforeach; ?>
+			</nav>
 
-			// Output security fields for the registered setting "csl_custom_site_logo".
-			settings_fields( 'custom-site-logo' );
+			<div class="csl-tab-panels">
 
-			$settings_sections = Custom_Site_Logo_Admin_Settings::get_tabs();
+			<form action="options.php" method="post" class="csl_CustomSiteLogo_form" >
+			<!-- Display Settings Here -->
+			<?php
 
-		foreach ( $tabs as $tab_id => $tab_label ) {
-			if ( 'csl_import_export' === $tab_id ) {
-				continue; // Rendered separately, in its own form, after this one.
+				// Output security fields for the registered setting "csl_custom_site_logo".
+				settings_fields( 'custom-site-logo' );
+
+				$settings_sections = Custom_Site_Logo_Admin_Settings::get_tabs();
+
+			foreach ( $tabs as $tab_id => $tab_label ) {
+				if ( 'csl_import_export' === $tab_id ) {
+					continue; // Rendered separately, in its own form, after this one.
+				}
+
+				printf(
+					'<div class="csl-tab-content" id="%1$s-panel" data-tab="%1$s" role="tabpanel" aria-labelledby="%1$s">',
+					esc_attr( $tab_id )
+				);
+
+				printf( '<h2 class="csl-panel-title">%s</h2>', esc_html( $tab_label ) );
+
+				if ( isset( $settings_sections[ $tab_id ] ) ) {
+					echo '<table class="form-table" role="presentation"><tbody>';
+					do_settings_fields( 'custom-site-logo', $tab_id );
+					echo '</tbody></table>';
+				} else {
+					/**
+					 * Fires inside a non-Settings-API tab panel (e.g. "Logo Maker"), inside the main settings `<form>`.
+					 *
+					 * @since 1.2.0
+					 * @param string $tab_id The id of the tab panel currently being rendered.
+					 */
+					do_action( 'custom_site_logo_render_custom_tab', $tab_id );
+				}
+
+				echo '</div>';
 			}
 
-			echo '<div class="csl-tab-content" data-tab="' . esc_attr( $tab_id ) . '">';
+				// Output save settings button. Hidden (via JS) while the Import/Export tab is active, since that tab has its own buttons.
+				echo '<div class="csl-save-button-wrap">';
+				submit_button( __( 'Save Settings', 'custom-site-logo' ) );
+				echo '</div>';
 
-			if ( isset( $settings_sections[ $tab_id ] ) ) {
-				echo '<table class="form-table" role="presentation"><tbody>';
-				do_settings_fields( 'custom-site-logo', $tab_id );
-				echo '</tbody></table>';
-			} else {
-				/**
-				 * Fires inside a non-Settings-API tab panel (e.g. "Logo Maker"), inside the main settings `<form>`.
-				 *
-				 * @since 1.2.0
-				 * @param string $tab_id The id of the tab panel currently being rendered.
-				 */
-				do_action( 'custom_site_logo_render_custom_tab', $tab_id );
-			}
+			?>
+			</form>
 
-			echo '</div>';
-		}
+			<div class="csl-tab-content" id="csl_import_export-panel" data-tab="csl_import_export" role="tabpanel" aria-labelledby="csl_import_export">
+			<h2 class="csl-panel-title"><?php esc_html_e( 'Import / Export', 'custom-site-logo' ); ?></h2>
+			<?php
+			/**
+			 * Fires inside the "Import / Export" tab panel, inside the `.wrap` container.
+			 *
+			 * Used by Custom_Site_Logo_Export_Import to add its export/import UI
+			 * without cluttering the main Settings API form.
+			 *
+			 * @since 1.2.0
+			 */
+			do_action( 'custom_site_logo_after_settings_form' );
+			?>
+			</div><!-- csl-tab-content (import/export) -->
 
-			// Output save settings button. Hidden (via JS) while the Import/Export tab is active, since that tab has its own buttons.
-			echo '<div class="csl-save-button-wrap">';
-			submit_button( __( 'Save Settings', 'custom-site-logo' ) );
-			echo '</div>';
-
-		?>
-		</form>
-
-		<div class="csl-tab-content" data-tab="csl_import_export">
-		<?php
-		/**
-		 * Fires inside the "Import / Export" tab panel, inside the `.wrap` container.
-		 *
-		 * Used by Custom_Site_Logo_Export_Import to add its export/import UI
-		 * without cluttering the main Settings API form.
-		 *
-		 * @since 1.2.0
-		 */
-		do_action( 'custom_site_logo_after_settings_form' );
-		?>
-		</div><!-- csl-tab-content (import/export) -->
+			</div><!-- csl-tab-panels -->
+		</div><!-- csl-layout -->
 
 		</div><!-- wrap -->
 		<?php

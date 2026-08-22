@@ -91,18 +91,6 @@ class Custom_Site_Logo_Public {
 	 */
 	public function enqueue_styles() {
 
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Custom_Site_Logo_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Custom_Site_Logo_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
 		wp_enqueue_style(
 			$this->plugin_name,
 			plugin_dir_url( __FILE__ ) . 'css/custom-site-logo-public.css',
@@ -111,40 +99,55 @@ class Custom_Site_Logo_Public {
 			'all'
 		);
 
-		wp_enqueue_style(
-			'csl_front_hover_css',
-			plugins_url( 'css/hover-css/hover-min.css', __FILE__ ),
-			array(),
-			'1.0',
-			'all'
-		);
+		/*
+		 * The Hover.css library is over 100KB, so it is only worth sending when
+		 * a hover effect has actually been chosen.
+		 */
+		$hover_effect = Custom_Site_Logo_Options::get( 'csl_CustomSiteLogo_hover_effect_field' );
+
+		if ( ! empty( $hover_effect ) && 'none' !== $hover_effect ) {
+			wp_enqueue_style(
+				'csl_front_hover_css',
+				plugins_url( 'css/hover-css/hover-min.css', __FILE__ ),
+				array(),
+				'1.0',
+				'all'
+			);
+		}
 	}
 
 	/**
 	 * Register the JavaScript for the public-facing side of the site.
 	 *
+	 * The script only powers the sticky logo and click tracking, so it is left
+	 * out entirely when neither feature is switched on.
+	 *
 	 * @since    1.0.0
 	 */
 	public function enqueue_scripts() {
 
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Custom_Site_Logo_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Custom_Site_Logo_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
+		$sticky_enabled = (int) Custom_Site_Logo_Options::get( 'csl_CustomSiteLogo_sticky_enabled_field' );
+		$track_clicks   = (int) Custom_Site_Logo_Options::get( 'csl_CustomSiteLogo_click_tracking_field' );
+
+		if ( ! $sticky_enabled && ! $track_clicks ) {
+			return;
+		}
 
 		wp_enqueue_script(
 			$this->plugin_name,
 			plugin_dir_url( __FILE__ ) . 'js/custom-site-logo-public.js',
-			array( 'jquery' ),
+			array(),
 			$this->version,
-			false
+			true
+		);
+
+		wp_localize_script(
+			$this->plugin_name,
+			'cslPublic',
+			array(
+				'trackClicks'   => (bool) $track_clicks,
+				'clickEndpoint' => $track_clicks ? esc_url_raw( rest_url( Custom_Site_Logo_Rest::NAMESPACE_NAME . '/click' ) ) : '',
+			)
 		);
 	}
 }
