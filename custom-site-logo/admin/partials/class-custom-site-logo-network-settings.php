@@ -58,6 +58,20 @@ class Custom_Site_Logo_Network_Settings {
 					</p>
 				</td>
 			</tr>
+			<?php
+			if ( custom_site_logo_is_pro_active() ) {
+				/**
+				 * Fires inside the Custom Site Logo table on Network Settings.
+				 *
+				 * Custom Site Logo Pro adds the network lock and shared library here.
+				 *
+				 * @since 2.1.0
+				 */
+				do_action( 'custom_site_logo_network_settings_fields' );
+			} else {
+				Custom_Site_Logo_Pro_Teaser::render_locked_network_rows();
+			}
+			?>
 		</table>
 		<?php
 	}

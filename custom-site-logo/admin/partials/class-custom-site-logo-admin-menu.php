@@ -99,11 +99,19 @@ class Custom_Site_Logo_Admin_Menu {
 			<?php
 		}
 
-		// "Logo Maker" and "Import/Export" aren't Settings API sections; they're spliced in around the real ones.
+		// "Logo Maker", the Pro groups, and "Import/Export" aren't Settings API sections.
 		$tabs = array_merge(
 			array( 'csl_logo_maker' => __( 'Logo Maker', 'custom-site-logo' ) ),
 			Custom_Site_Logo_Admin_Settings::get_tabs(),
-			array( 'csl_import_export' => __( 'Import / Export', 'custom-site-logo' ) )
+			array(
+				'csl_pro_logos'       => __( 'Logo Sets', 'custom-site-logo' ),
+				'csl_pro_campaigns'   => __( 'Campaigns', 'custom-site-logo' ),
+				'csl_pro_access'      => __( 'Access', 'custom-site-logo' ),
+				'csl_pro_woocommerce' => __( 'WooCommerce', 'custom-site-logo' ),
+				'csl_pro_agency'      => __( 'Agency', 'custom-site-logo' ),
+				'csl_pro_files'       => __( 'Logo Files', 'custom-site-logo' ),
+				'csl_import_export'   => __( 'Import / Export', 'custom-site-logo' ),
+			)
 		);
 
 		$tab_icons = array(
@@ -114,9 +122,29 @@ class Custom_Site_Logo_Admin_Menu {
 			'csl_section_advanced'  => 'dashicons-images-alt2',
 			'csl_section_sticky'    => 'dashicons-admin-page',
 			'csl_section_locations' => 'dashicons-location-alt',
+			'csl_section_login'     => 'dashicons-unlock',
 			'csl_section_rules'     => 'dashicons-calendar-alt',
 			'csl_section_seo'       => 'dashicons-performance',
+			'csl_section_analytics' => 'dashicons-chart-bar',
+			'csl_pro_logos'         => 'dashicons-images-alt',
+			'csl_pro_campaigns'     => 'dashicons-megaphone',
+			'csl_pro_access'        => 'dashicons-admin-users',
+			'csl_pro_woocommerce'   => 'dashicons-cart',
+			'csl_pro_agency'        => 'dashicons-groups',
+			'csl_pro_files'         => 'dashicons-media-archive',
 			'csl_import_export'     => 'dashicons-migrate',
+		);
+
+		$pro_tab_ids = array(
+			'csl_section_rules',
+			'csl_section_seo',
+			'csl_section_analytics',
+			'csl_pro_logos',
+			'csl_pro_campaigns',
+			'csl_pro_access',
+			'csl_pro_woocommerce',
+			'csl_pro_agency',
+			'csl_pro_files',
 		);
 		?>
 		<div class="wrap csl-settings-wrap">
@@ -161,6 +189,9 @@ class Custom_Site_Logo_Admin_Menu {
 						role="tab" aria-selected="false" aria-controls="<?php echo esc_attr( $tab_id ); ?>-panel">
 						<span class="dashicons <?php echo esc_attr( isset( $tab_icons[ $tab_id ] ) ? $tab_icons[ $tab_id ] : 'dashicons-admin-generic' ); ?>"></span>
 						<span class="csl-tab-nav-label"><?php echo esc_html( $tab_label ); ?></span>
+						<?php if ( in_array( $tab_id, $pro_tab_ids, true ) ) : ?>
+							<span class="csl-pro-nav-badge"><?php esc_html_e( 'Pro', 'custom-site-logo' ); ?></span>
+						<?php endif; ?>
 					</a>
 				<?php endforeach; ?>
 			</nav>
@@ -176,9 +207,19 @@ class Custom_Site_Logo_Admin_Menu {
 
 				$settings_sections = Custom_Site_Logo_Admin_Settings::get_tabs();
 
+			$external_tabs = array(
+				'csl_import_export',
+				'csl_pro_logos',
+				'csl_pro_campaigns',
+				'csl_pro_access',
+				'csl_pro_woocommerce',
+				'csl_pro_agency',
+				'csl_pro_files',
+			);
+
 			foreach ( $tabs as $tab_id => $tab_label ) {
-				if ( 'csl_import_export' === $tab_id ) {
-					continue; // Rendered separately, in its own form, after this one.
+				if ( in_array( $tab_id, $external_tabs, true ) ) {
+					continue; // Each has its own markup, rendered after this form.
 				}
 
 				printf(
@@ -188,10 +229,16 @@ class Custom_Site_Logo_Admin_Menu {
 
 				printf( '<h2 class="csl-panel-title">%s</h2>', esc_html( $tab_label ) );
 
-				if ( isset( $settings_sections[ $tab_id ] ) ) {
-					echo '<table class="form-table" role="presentation"><tbody>';
-					do_settings_fields( 'custom-site-logo', $tab_id );
-					echo '</tbody></table>';
+				if ( 'csl_section_analytics' === $tab_id && custom_site_logo_is_pro_active() ) {
+					Custom_Site_Logo_Admin_Settings::render_analytics_panel();
+				} elseif ( isset( $settings_sections[ $tab_id ] ) ) {
+					if ( in_array( $tab_id, array( 'csl_section_rules', 'csl_section_seo', 'csl_section_analytics' ), true ) && ! custom_site_logo_is_pro_active() ) {
+						Custom_Site_Logo_Pro_Teaser::render_locked_section( $tab_id );
+					} else {
+						echo '<table class="form-table" role="presentation"><tbody>';
+						do_settings_fields( 'custom-site-logo', $tab_id );
+						echo '</tbody></table>';
+					}
 				} else {
 					/**
 					 * Fires inside a non-Settings-API tab panel (e.g. "Logo Maker"), inside the main settings `<form>`.
@@ -212,6 +259,22 @@ class Custom_Site_Logo_Admin_Menu {
 
 			?>
 			</form>
+
+			<?php
+			/**
+			 * Fires after the free settings form, where Pro prints its own tabs.
+			 *
+			 * Each tab is a panel inside one Pro form, so one save covers every
+			 * Pro group. The free plugin prints a locked preview when Pro is off.
+			 *
+			 * @since 2.1.0
+			 */
+			do_action( 'custom_site_logo_render_external_tabs' );
+
+			if ( ! custom_site_logo_is_pro_active() ) {
+				Custom_Site_Logo_Pro_Teaser::render_locked_tabs();
+			}
+			?>
 
 			<div class="csl-tab-content" id="csl_import_export-panel" data-tab="csl_import_export" role="tabpanel" aria-labelledby="csl_import_export">
 			<h2 class="csl-panel-title"><?php esc_html_e( 'Import / Export', 'custom-site-logo' ); ?></h2>

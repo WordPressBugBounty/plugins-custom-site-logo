@@ -43,7 +43,7 @@ class Custom_Site_Logo_Head {
 	 * @since 2.0.0
 	 */
 	public function render_preload_tag() {
-		if ( ! Custom_Site_Logo_Options::get( 'csl_CustomSiteLogo_preload_field' ) ) {
+		if ( ! custom_site_logo_is_pro_active() || ! Custom_Site_Logo_Options::get( 'csl_CustomSiteLogo_preload_field' ) ) {
 			return;
 		}
 
@@ -86,7 +86,7 @@ class Custom_Site_Logo_Head {
 	 * @since 2.0.0
 	 */
 	public function render_structured_data() {
-		if ( ! Custom_Site_Logo_Options::get( 'csl_CustomSiteLogo_schema_field' ) ) {
+		if ( ! custom_site_logo_is_pro_active() || ! Custom_Site_Logo_Options::get( 'csl_CustomSiteLogo_schema_field' ) ) {
 			return;
 		}
 

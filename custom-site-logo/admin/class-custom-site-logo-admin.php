@@ -120,6 +120,13 @@ class Custom_Site_Logo_Admin {
 		require_once plugin_dir_path( __DIR__ ) .
 			'admin/partials/class-custom-site-logo-network-settings.php';
 		new Custom_Site_Logo_Network_Settings();
+
+		/**
+		 * Locked preview of the settings that Custom Site Logo Pro will provide.
+		 */
+		require_once plugin_dir_path( __DIR__ ) .
+			'admin/partials/class-custom-site-logo-pro-teaser.php';
+		new Custom_Site_Logo_Pro_Teaser();
 	}
 
 	/**
@@ -138,7 +145,10 @@ class Custom_Site_Logo_Admin {
 			return;
 		}
 
-		wp_enqueue_style( 'csl_admin_css', plugins_url( 'css/custom-site-logo-admin.css', __FILE__ ), array(), '1.0', 'all' );
+		$csl_admin_css = plugin_dir_path( __FILE__ ) . 'css/custom-site-logo-admin.css';
+		$csl_admin_ver = file_exists( $csl_admin_css ) ? (string) filemtime( $csl_admin_css ) : $this->version;
+
+		wp_enqueue_style( 'csl_admin_css', plugins_url( 'css/custom-site-logo-admin.css', __FILE__ ), array(), $csl_admin_ver, 'all' );
 
 		wp_enqueue_style( 'csl_admin_hover_css', plugins_url( 'css/hover-css/hover-min.css', __FILE__ ), array(), '1.0', 'all' );
 	}

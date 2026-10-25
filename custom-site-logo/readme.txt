@@ -2,17 +2,17 @@
 Contributors: iticiti
 Tags: logo, center logo, logo management, custom logo, widget
 Requires at least: 5.0
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 5.6
-Stable tag: 2.0.0
+Stable tag: 2.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Show your logo anywhere: theme header, login screen, admin bar and emails. Retina, dark mode, mobile, sticky, scheduled and per-page logos.
+Show your logo anywhere: theme header, login screen, admin bar, and emails. Retina, dark mode, mobile, sticky, and per-page logos.
 
 == Description ==
 
-**Custom Site Logo** helps you manage your WordPress website's logo without editing a single line of code. Upload a new logo, or reuse one from your Media Library, then let the plugin place it wherever your site shows its branding — your theme's header, the login screen, the admin bar, even WooCommerce emails.
+**Custom Site Logo** helps you manage your WordPress website's logo without editing a single line of code. Upload a new logo, or reuse one from your Media Library, then let the plugin place it wherever your site shows its branding — your theme's header, the login and registration screens, the admin bar, even WooCommerce emails.
 
 If your theme already has a logo slot, switch on one option and the plugin fills it for you. If it doesn't, drop in a shortcode, a block, a widget, or a one-line template tag.
 
@@ -20,7 +20,7 @@ If your theme already has a logo slot, switch on one option and the plugin fills
 
 * **Your theme's own logo slot** — switch on one option and the plugin fills the logo area your theme already has. No shortcode, no template editing.
 * **A shortcode, block, widget or template tag** — use `[csl_display_logo]` in any post or page, add the "Custom Site Logo" block, drag the widget into a sidebar, or call `csl_CustomSiteLogo_show_logo()` in your theme.
-* **The login screen** — replace the WordPress logo on wp-login.php with your own, at the width you choose.
+* **The login, registration, and lost-password screens** — replace the WordPress logo on those screens with your own, at the width you choose.
 * **The admin bar and dashboard footer** — brand the admin for your clients.
 * **WooCommerce emails** — use your logo as the header image on order and account emails.
 * **Printed pages** — keep your logo (or a print-friendly version of it) on paper.
@@ -31,21 +31,9 @@ If your theme already has a logo slot, switch on one option and the plugin fills
 * **Dark mode** — an alternate logo shown automatically based on the visitor's OS/browser colour scheme.
 * **Mobile** — a different logo for small screens, with a breakpoint you control.
 * **Sticky/shrink on scroll** — scale the logo down as the visitor scrolls, and optionally swap in a compact version.
-* **Scheduled** — set a start and end date for a seasonal or campaign logo, and it swaps itself in and out.
-* **Conditional** — show a different logo based on post type, a specific page, category, user role, device, the front page, archives, search results, or whether the visitor is logged in.
-* **Per language** — assign a logo to each locale on a multilingual site.
-* **Random rotation** — cycle through a set of logos, one picked per page view.
 * **Per page or post** — override the logo on an individual page from the editor sidebar, retina, dark and mobile versions included.
-* **Network-wide** — set one default logo every site in a multisite network falls back to.
-
-= Speed, SEO and Accessibility =
-
-* **No layout shift** — width and height attributes are added automatically so the page doesn't jump while the logo loads.
-* **Loads only what it needs** — the hover-effect stylesheet is only enqueued when you actually pick a hover effect, and the script only when sticky mode or click tracking is on.
-* **Optional preloading** — hint to the browser to fetch your logo early, for a faster Largest Contentful Paint.
-* **Optional lazy loading** — for logos that sit below the fold.
-* **Structured data** — output Organization JSON-LD so search engines can associate the logo with your site.
-* **Accessibility and link control** — set your own alt text, title and ARIA label, open the link in a new tab, add `nofollow`, or turn the link off entirely.
+* **Size and layout** — set a width and height, center the logo, and make it scale to fit smaller screens.
+* **Hover effects** — choose an effect and preview it on the settings page.
 
 = For Developers =
 
@@ -59,7 +47,6 @@ If your theme already has a logo slot, switch on one option and the plugin fills
 * **SVG support** — upload SVG logos alongside raster images, with basic upload sanitization.
 * **Live preview in the Customizer** — configure and preview from Appearance » Customize.
 * **Export, import and reset** — back up your configuration as a JSON file, move it to another site, or return everything to defaults.
-* **Click tracking** — see how often your logo is clicked, with an optional Google Analytics event.
 
 = How to Use It =
 
@@ -72,7 +59,27 @@ If your theme has no logo area, you have four options:
 3. Drag the "Custom Site Logo" widget into a widget area.
 4. Open your theme's `header.php` and paste `<?php echo csl_CustomSiteLogo_show_logo(); ?>` where you want the logo.
 
+The settings screen is split into Logo Maker, General, Size & Layout, Hover Effect, Advanced Logos, Sticky Logo, Display Locations, Login & Registration, and Import / Export.
+
 If you run into any issues setting up the plugin, please reach out via the [support forum](https://wordpress.org/support/plugin/custom-site-logo/).
+
+= Custom Site Logo Pro =
+
+Scheduled logos, conditional rules, SEO controls, and click reports are part of [Custom Site Logo Pro](https://kommercely.com/product/custom-site-logo-pro/). Pro is a separate add-on. Install it next to this plugin and leave both active. This free plugin keeps working on its own, and any Pro settings you have already saved stay stored until Pro is active.
+
+[Custom Site Logo Pro](https://kommercely.com/product/custom-site-logo-pro/) adds:
+
+* **Conditional Rules** — swap the logo between two dates, show one when a condition is met, assign a logo to a language, or rotate through a set of logos. Dated campaigns can repeat every year.
+* **SEO & Performance** — turn the logo link off, open it in a new tab, add `nofollow`, set a title and ARIA label, add width and height attributes, preload the logo, lazy-load it, and publish Organization structured data.
+* **Analytics** — totals for today, the last 7 days, the last 30 days, and all time, plus daily history, mobile and desktop, top pages, link destinations, CSV export, and a Google Analytics event.
+* **Logo Sets** — a separate logo for the footer, WooCommerce emails, PDF invoices, checkout, the customer account menu, and refund emails. Place one with `[csl_pro_logo]`.
+* **Campaigns** — point a scheduled logo at a sale page, add a Black Friday or Christmas schedule in one click, and email the admin three days before a campaign ends. The same reminder can go to Slack.
+* **WooCommerce** — one logo for a product category, one logo for visitors in a chosen country, and a logo shown during business hours.
+* **Agency** — limit shop managers to the main logo, hold their changes for approval, rename the settings menu, save a Logo Maker wordmark as an SVG, and scan the theme for the logo it uses.
+* **Logo Lockup block** — place a logo together with text.
+* **Multisite** — a network default logo and a network lock, edited from Network Admin.
+
+Pro requires this plugin, version 2.0.0 or newer, WordPress 5.0, and PHP 5.6. Get it at [https://kommercely.com/product/custom-site-logo-pro/](https://kommercely.com/product/custom-site-logo-pro/).
 
 == Installation ==
 
@@ -109,7 +116,7 @@ Yes. On the Advanced Logos tab you can upload a retina/@2x logo, a dark-mode log
 
 = Can I replace the WordPress logo on the login screen? =
 
-Yes. Turn on the login logo on the Display Locations tab, choose an image, and set the width you want. The same tab also covers the admin bar, the dashboard footer, WooCommerce emails and printed pages.
+Yes. Open the Login & Registration tab, turn the login logo on, choose an image, and set the width you want. The same logo is used on the registration and lost-password screens, and it links to your site. Display Locations covers the theme logo, the admin bar, the dashboard footer, WooCommerce emails, and printed pages.
 
 = Can the logo shrink when visitors scroll? =
 
@@ -117,15 +124,15 @@ Yes. Turn on the sticky logo on the Sticky Logo tab. You can set how far down th
 
 = Can I schedule a seasonal or campaign logo? =
 
-Yes. On the Conditional Rules tab, add a schedule with a start date, an end date and an image. The plugin swaps that logo in and out for you, so you don't have to remember to change it back.
+That is part of [Custom Site Logo Pro](https://kommercely.com/product/custom-site-logo-pro/). On the Conditional Rules tab, add a schedule with a start date, an end date, and an image. Pro swaps that logo in and out for you. A campaign can also repeat on the same dates every year.
 
 = Can I show a different logo on different pages? =
 
-Yes. On the Conditional Rules tab you can add rules based on post type, a specific post or page ID, category, user role, device, the front page, archives, search results, or whether the visitor is logged in. The first matching rule wins.
+A logo for one page or post is included here, in the editor sidebar. Rules for a post type, category, user role, device, the front page, archives, search, or logged-in visitors are part of [Custom Site Logo Pro](https://kommercely.com/product/custom-site-logo-pro/). The first matching rule wins.
 
 = Can I use a different logo per language? =
 
-Yes. Add one row per locale on the Conditional Rules tab. The plugin matches against the locale WordPress has determined for the current request, so it works alongside the usual multilingual plugins.
+Yes, with [Custom Site Logo Pro](https://kommercely.com/product/custom-site-logo-pro/). Add one row per locale on the Conditional Rules tab. Pro matches the locale WordPress has determined for the current request, so it works alongside the usual multilingual plugins.
 
 = Why does my logo look too big? =
 
@@ -133,15 +140,15 @@ Uncheck "Make Logo Responsive" on the Size & Layout tab, or set a custom width a
 
 = Will this slow my site down? =
 
-The plugin is built to add as little as possible. The hover-effect stylesheet is only loaded when you actually choose a hover effect, and the JavaScript file is only loaded when sticky mode or click tracking is switched on. If you use neither, no extra CSS or JS is added to your pages at all.
+The plugin is built to add as little as possible. The hover-effect stylesheet is only loaded when you actually choose a hover effect, and the front-end script is only loaded when sticky mode is on. If you use neither, no extra CSS or JavaScript is added to your pages.
 
 = Does it help or hurt Core Web Vitals? =
 
-It should help. Width and height attributes are added to the logo automatically, which prevents the layout shift (CLS) that an unsized image causes. You can also preload the logo to improve Largest Contentful Paint, or lazy-load it if it sits below the fold.
+The Size & Layout tab can set the logo's width and height in CSS. Automatic width and height attributes, preloading, and lazy loading are part of [Custom Site Logo Pro](https://kommercely.com/product/custom-site-logo-pro/), on the SEO & Performance tab. Those attributes let the browser reserve space so the page does not jump while the logo loads.
 
 = Does the click tracking collect personal data? =
 
-No. Only a daily count of clicks is stored. To stop the endpoint being spammed, a visitor's IP address and user agent are combined into a hash that lives in a temporary 60-second cache — the address itself is never written to your database. Click tracking is off by default. If you also enable the Google Analytics event, that data goes to Google under your own Analytics configuration.
+Click tracking is part of [Custom Site Logo Pro](https://kommercely.com/product/custom-site-logo-pro/) and is off until you turn it on. It stores daily click counts, device type, the page path, and the link destination. To stop the endpoint being spammed, a visitor's IP address and user agent are combined into a hash that lives in a temporary 60-second cache — the address itself is never written to your database. If you also enable the Google Analytics event, that data goes to Google under your own Analytics configuration.
 
 = Is uploading SVG logos safe? =
 
@@ -149,11 +156,11 @@ SVG upload is limited to users who can already change your plugin settings, and 
 
 = Does it work on multisite? =
 
-Yes. A network administrator can set one network-wide default logo, which any site in the network can fall back to, and each site can still override it with its own.
+Yes. Each site keeps its own logo settings. A network default logo and a network lock are part of [Custom Site Logo Pro](https://kommercely.com/product/custom-site-logo-pro/), and those are edited from Network Admin.
 
 = Can I use this with a headless or React front end? =
 
-Yes. `GET /wp-json/custom-site-logo/v1/logo` returns the resolved logo URL, its retina, dark and mobile variants, its dimensions and the rendered markup, with all of your conditional rules already applied.
+Yes. `GET /wp-json/custom-site-logo/v1/logo` returns the resolved logo URL, its retina, dark and mobile variants, its dimensions, and the rendered markup. When Custom Site Logo Pro is active, the response includes the logo selected by your rules.
 
 = Where is the settings page? =
 
@@ -161,22 +168,49 @@ Go to Appearance » Custom Site Logo. You can also configure and preview your lo
 
 = Can I back up or transfer my settings? =
 
-Yes. Use the Import/Export tab to download your configuration as a JSON file and import it on this site or another one. The same tab has a Reset button that returns every setting to its default.
+Yes. Use the Import / Export tab to download your configuration as a JSON file and import it on this site or another one. The same tab has a Reset button that returns every setting to its default.
 
 = What happens to my settings if I delete the plugin? =
 
-Deleting the plugin removes its settings, click statistics and per-page logo overrides. Your logo images stay in your Media Library, because they belong to your site rather than to the plugin.
+Deleting the plugin removes its settings, click statistics, and per-page logo overrides. Your logo images stay in your Media Library, because they belong to your site rather than to the plugin.
+
+= Do I need Custom Site Logo Pro? =
+
+No. Theme logos, the login screen, retina, dark mode, mobile, sticky, per-page logos, the Logo Maker, and import/export all work in this plugin. Pro adds campaigns, extra logo locations, store logos, analytics, and agency controls: [https://kommercely.com/product/custom-site-logo-pro/](https://kommercely.com/product/custom-site-logo-pro/).
+
+== External services ==
+
+The Logo Maker, on the plugin's own settings screen, loads font previews from Google Fonts (`fonts.googleapis.com`). This request runs only in wp-admin, for an administrator viewing Appearance » Custom Site Logo. It sends the font stylesheet request to Google. No front-end visitor is sent there by this plugin. Google Fonts is provided by Google and is subject to [Google's privacy policy](https://policies.google.com/privacy).
 
 == Screenshots ==
 
-1. The Logo Maker tab — type your site name, pick a font and colors, and generate a text logo without ever leaving the settings page.
+1. The Logo Maker tab in 2.1.0 — type your site name, pick a font and colors, and generate a text logo without ever leaving the settings page.
 2. The General tab — upload or choose a logo, and optionally link it to a custom URL.
 3. The Size & Layout tab — set a custom width/height, center the logo, and make it responsive.
 4. The Hover Effect tab — pick a hover effect and preview it live.
 5. The Advanced Logos tab — configure retina/@2x, dark-mode, and mobile logos.
-6. The Import/Export tab — back up your settings as a JSON file, or restore them from one.
+6. The Import / Export tab — back up your settings as a JSON file, or restore them from one.
 
 == Changelog ==
+
+= 2.1.0 =
+Release Date: October 26th, 2026
+
+New features:
+
+* Added a Login & Registration tab. The login logo is also used on the registration and lost-password screens, and it links to your site.
+* Added [Custom Site Logo Pro](https://kommercely.com/product/custom-site-logo-pro/) as an optional add-on for campaigns, extra logo locations, store logos, analytics, and agency controls. Pro does not replace this plugin.
+
+Updates:
+
+* Conditional Rules, SEO & Performance, and Analytics are now Pro features. The tabs stay on the settings screen. The saved values are kept, and they take effect when Pro is active.
+* Scheduled logos, conditional logos, per-language logos, logo rotation, and the network default logo run only when Pro is active.
+* New tab, nofollow, disabling the logo link, the title and ARIA label, width and height attributes, preloading, lazy loading, structured data, and click tracking run only when Pro is active.
+* Tested up to WordPress 7.1.
+
+Bugfixes:
+
+* Fixed the width and height from Size & Layout not being written onto the logo image.
 
 = 2.0.0 =
 Release Date: August 22nd, 2026
@@ -290,6 +324,9 @@ Updates:
 Update the code standards.
 
 == Upgrade Notice ==
+
+= 2.1.0 =
+Adds a Login & Registration screen. Scheduled logos, conditional rules, language logos, rotation, SEO options, and click tracking now require Custom Site Logo Pro. Settings you already saved for those features are kept.
 
 = 2.0.0 =
 Major release. Place your logo without editing theme files, and add it to the login screen, admin bar and emails. New sticky, scheduled, conditional and per-language logos, plus preloading, structured data and a REST endpoint. Fixes garbled admin text and Customizer saves.

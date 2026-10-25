@@ -16,6 +16,7 @@ jQuery( document ).ready(
 		var $csl_tabs           = $( '.csl-tab-nav-item' );
 		var $csl_tab_panels     = $( '.csl-tab-content' );
 		var $csl_save_button    = $( '.csl-save-button-wrap' );
+		var $csl_pro_save       = $( '.csl-pro-save-button-wrap' );
 		var csl_tab_storage_key = 'csl_active_settings_tab';
 
 		function csl_activate_tab( tabId ) {
@@ -29,8 +30,10 @@ jQuery( document ).ready(
 			$csl_tab_panels.removeClass( 'csl-tab-active' );
 			$csl_tab_panels.filter( '[data-tab="' + tabId + '"]' ).addClass( 'csl-tab-active' );
 
-			/* The main settings form's Save button doesn't apply to the Import/Export tab. */
-			$csl_save_button.toggle( 'csl_import_export' !== tabId );
+			/* Pro tabs save through their own form. Import/Export has its own buttons. */
+			var csl_is_pro_tab = 0 === String( tabId ).indexOf( 'csl_pro_' );
+			$csl_save_button.toggle( 'csl_import_export' !== tabId && ! csl_is_pro_tab );
+			$csl_pro_save.toggle( csl_is_pro_tab );
 
 			try {
 				window.localStorage.setItem( csl_tab_storage_key, tabId );
@@ -49,12 +52,17 @@ jQuery( document ).ready(
 			);
 
 			var csl_saved_tab = null;
+			var csl_hash_tab  = ( window.location.hash || '' ).replace( /^#/, '' ).replace( /-panel$/, '' );
 			try {
 				csl_saved_tab = window.localStorage.getItem( csl_tab_storage_key );
 			} catch ( err ) {
 				/* Ignore; falls back to the first tab. */
 			}
-			csl_activate_tab( csl_saved_tab );
+			if ( csl_hash_tab && $csl_tab_panels.filter( '[data-tab="' + csl_hash_tab + '"]' ).length ) {
+				csl_activate_tab( csl_hash_tab );
+			} else {
+				csl_activate_tab( csl_saved_tab );
+			}
 		}
 
 		/* ---------------------------------------------------------------

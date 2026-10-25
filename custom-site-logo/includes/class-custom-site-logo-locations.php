@@ -159,7 +159,7 @@ class Custom_Site_Logo_Locations {
 	}
 
 	/**
-	 * Replace the WordPress logo above the login form.
+	 * Replace the WordPress logo on the login, registration, and lost-password screens.
 	 *
 	 * @since 2.0.0
 	 */

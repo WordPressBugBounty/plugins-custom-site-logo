@@ -115,6 +115,20 @@
 	color: var(--csl-primary);
 	font-weight: 600;
 }
+.csl-tab-nav-label {
+	flex: 1 1 auto;
+}
+.csl-pro-nav-badge {
+	flex: 0 0 auto;
+	background: #1d2327;
+	color: #fff;
+	border-radius: 999px;
+	padding: 1px 6px;
+	font-size: 9px;
+	font-weight: 700;
+	letter-spacing: 0.03em;
+	text-transform: uppercase;
+}
 .csl-tab-nav-item .dashicons {
 	flex: 0 0 auto;
 	font-size: 17px;
@@ -146,8 +160,9 @@
 	margin: 16px 0 4px;
 	padding-bottom: 12px;
 	border-bottom: 1px solid var(--csl-border);
-	font-size: 15px;
+	font-size: 20px;
 	font-weight: 600;
+	line-height: 1.3;
 }
 .csl-tab-content .form-table{
 	margin-top: 0;
@@ -167,6 +182,21 @@
 .csl-save-button-wrap .button-primary {
 	padding: 4px 18px;
 	height: auto;
+}
+.csl-pro-save-button-wrap {
+	display: none;
+	margin-top: 14px;
+}
+.csl-pro-save-button-wrap .submit {
+	margin: 0;
+	padding: 0;
+}
+
+/* A select that sits above an image field needs a real gap. Inline selects ignore margin. */
+.csl-country-select {
+	display: block;
+	margin: 0 0 16px;
+	min-width: 220px;
 }
 
 /* Image upload fields (logo/retina/dark/mobile) */
@@ -486,36 +516,174 @@
 .csl-repeater-remove:hover {
 	color: #8a2424;
 }
-.csl-repeater-add {
+.wp-core-ui .button.csl-repeater-add {
 	display: inline-flex !important;
-	align-items: center;
-	gap: 4px;
+	flex-direction: row !important;
+	align-items: center !important;
+	justify-content: center !important;
+	gap: 5px;
+	vertical-align: middle;
 }
-.csl-repeater-add .dashicons {
-	width: 16px;
-	height: 16px;
+.csl-repeater-plus {
+	display: block;
+	font-family: inherit;
 	font-size: 16px;
+	font-weight: 400;
 	line-height: 1;
+	margin: 0;
+	padding: 0;
 }
 
 /* ---------------------------------------------------------------
- * Click statistics.
+ * Pro analytics report.
  * ------------------------------------------------------------- */
-.csl-stats {
+.csl-analytics-toolbar {
 	display: flex;
-	gap: 24px;
-	flex-wrap: wrap;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 16px;
+	margin-top: 8px;
+	padding-bottom: 16px;
+	border-bottom: 1px solid var(--csl-border);
 }
-.csl-stat {
-	display: flex;
-	flex-direction: column;
+.csl-analytics-toolbar .csl-pro-badge {
+	display: inline-block;
+	margin-bottom: 10px;
+}
+.csl-analytics-toolbar .description {
+	margin: 8px 0 0;
+}
+.csl-analytics-cards {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 12px;
+	margin: 16px 0;
+}
+.csl-analytics-summary {
+	padding: 14px 16px;
+	background: #f6f7f7;
+	border: 1px solid var(--csl-border);
+	border-radius: 8px;
+}
+.csl-analytics-summary strong {
+	display: block;
+	font-size: 28px;
+	line-height: 1.1;
+	color: #1d2327;
+}
+.csl-analytics-summary span {
+	display: block;
+	margin-top: 4px;
 	color: var(--csl-muted);
 	font-size: 12px;
 }
-.csl-stat strong {
-	font-size: 22px;
-	line-height: 1.2;
+.csl-analytics-grid {
+	display: grid;
+	grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+	gap: 16px;
+	align-items: start;
+}
+.csl-analytics-stack {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+.csl-analytics-panel {
+	padding: 16px 18px;
+	background: #fff;
+	border: 1px solid var(--csl-border);
+	border-radius: 8px;
+}
+.csl-analytics-panel h3 {
+	margin: 0 0 12px;
+	font-size: 14px;
+	font-weight: 600;
+}
+.csl-analytics-bars,
+.csl-analytics-rank {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.csl-analytics-bars li,
+.csl-analytics-rank li {
+	display: grid;
+	grid-template-columns: 72px minmax(0, 1fr) auto;
+	gap: 10px;
+	align-items: center;
+	margin: 0 0 8px;
+}
+.csl-analytics-rank li {
+	grid-template-columns: minmax(0, 1fr) auto;
+	padding-bottom: 8px;
+	border-bottom: 1px solid #f0f0f1;
+}
+.csl-analytics-rank li:last-child,
+.csl-analytics-bars li:last-child {
+	margin-bottom: 0;
+	border-bottom: 0;
+	padding-bottom: 0;
+}
+.csl-analytics-bar-label,
+.csl-analytics-rank code {
 	color: #1d2327;
+	font-size: 12px;
+	word-break: break-all;
+}
+.csl-analytics-track {
+	display: block;
+	height: 8px;
+	background: #f0f0f1;
+	border-radius: 999px;
+	overflow: hidden;
+}
+.csl-analytics-track span {
+	display: block;
+	height: 100%;
+	background: #2271b1;
+	border-radius: 999px;
+}
+.csl-analytics-split {
+	display: flex;
+	height: 10px;
+	overflow: hidden;
+	background: #f0f0f1;
+	border-radius: 999px;
+}
+.csl-analytics-split .is-mobile {
+	background: #2271b1;
+}
+.csl-analytics-split .is-desktop {
+	background: #72aee6;
+}
+.csl-analytics-split-key {
+	display: flex;
+	gap: 16px;
+	margin: 10px 0 0;
+	font-size: 12px;
+}
+.csl-analytics-split-key i {
+	display: inline-block;
+	width: 8px;
+	height: 8px;
+	margin-right: 6px;
+	border-radius: 999px;
+	vertical-align: middle;
+}
+.csl-analytics-split-key .is-mobile {
+	background: #2271b1;
+}
+.csl-analytics-split-key .is-desktop {
+	background: #72aee6;
+}
+@media (max-width: 960px) {
+	.csl-analytics-cards,
+	.csl-analytics-grid {
+		grid-template-columns: 1fr;
+	}
+	.csl-analytics-toolbar {
+		flex-direction: column;
+	}
 }
 
 /* ---------------------------------------------------------------
@@ -563,4 +731,42 @@
 	.csl-tab-content .form-table th {
 		width: auto;
 	}
+}
+
+/* Locked Pro preview. The controls are visible and cannot be used. */
+.csl-pro-notice {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	margin: 16px 0;
+	padding: 12px 14px;
+	background: #f6f7f7;
+	border: 1px solid var(--csl-border);
+	border-radius: 4px;
+}
+.csl-pro-notice p {
+	margin: 0;
+}
+.csl-pro-badge {
+	flex: 0 0 auto;
+	background: #1d2327;
+	color: #fff;
+	border-radius: 999px;
+	padding: 2px 8px;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+.csl-pro-locked {
+	opacity: 0.72;
+}
+.csl-tab-content h3.csl-pro-group-title {
+	margin: 28px 0 8px;
+	padding: 0 0 10px;
+	border-bottom: 1px solid var(--csl-border);
+	font-size: 20px;
+	font-weight: 600;
+	line-height: 1.3;
+	color: #1d2327;
 }

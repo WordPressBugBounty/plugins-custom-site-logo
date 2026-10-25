@@ -81,6 +81,18 @@ class Custom_Site_Logo_Renderer {
 		/* Schedules, conditional rules, language logos, rotation and the network default. */
 		$settings['image'] = Custom_Site_Logo_Conditions::resolve_image( $settings['image'], $post_id );
 
+		if ( ! custom_site_logo_is_pro_active() ) {
+			$settings['link_disable']   = 0;
+			$settings['link_new_tab']   = 0;
+			$settings['link_nofollow']  = 0;
+			$settings['title']          = '';
+			$settings['aria_label']     = '';
+			$settings['dimensions']     = 0;
+			$settings['lazy_load']      = 0;
+			$settings['preload']        = 0;
+			$settings['click_tracking'] = 0;
+		}
+
 		if ( $post_id ) {
 			$settings = self::apply_post_override( $settings, $post_id );
 		}
@@ -394,6 +406,10 @@ class Custom_Site_Logo_Renderer {
 			'src'   => $settings['image'],
 			'alt'   => self::get_alt_text( $settings ),
 		);
+
+		if ( '' !== $style ) {
+			$attributes['style'] = $style;
+		}
 
 		if ( ! empty( $settings['retina_image'] ) ) {
 			/* Escaped per URL here, since a srcset is a comma-separated list and cannot go through esc_url() as a whole. */

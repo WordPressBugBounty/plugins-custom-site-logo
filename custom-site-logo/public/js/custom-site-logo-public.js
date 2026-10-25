@@ -131,13 +131,20 @@
 				 * click almost always triggers.
 				 */
 				if ( window.fetch ) {
+					var link = logo.closest ? logo.closest( 'a' ) : null;
+
 					window.fetch(
 						settings.clickEndpoint,
 						{
 							method: 'POST',
 							keepalive: true,
 							headers: { 'Content-Type': 'application/json' },
-							body: '{}'
+							body: JSON.stringify(
+								{
+									device: window.matchMedia( '(max-width: 781px)' ).matches ? 'mobile' : 'desktop',
+									target: link ? link.href : ''
+								}
+							)
 						}
 					).catch(
 						function () {

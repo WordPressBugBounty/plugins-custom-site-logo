@@ -127,17 +127,19 @@ class Custom_Site_Logo_Public {
 	public function enqueue_scripts() {
 
 		$sticky_enabled = (int) Custom_Site_Logo_Options::get( 'csl_CustomSiteLogo_sticky_enabled_field' );
-		$track_clicks   = (int) Custom_Site_Logo_Options::get( 'csl_CustomSiteLogo_click_tracking_field' );
+		$track_clicks   = custom_site_logo_is_pro_active() ? (int) Custom_Site_Logo_Options::get( 'csl_CustomSiteLogo_click_tracking_field' ) : 0;
 
 		if ( ! $sticky_enabled && ! $track_clicks ) {
 			return;
 		}
 
+		$script_path = plugin_dir_path( __FILE__ ) . 'js/custom-site-logo-public.js';
+
 		wp_enqueue_script(
 			$this->plugin_name,
 			plugin_dir_url( __FILE__ ) . 'js/custom-site-logo-public.js',
 			array(),
-			$this->version,
+			file_exists( $script_path ) ? (string) filemtime( $script_path ) : $this->version,
 			true
 		);
 

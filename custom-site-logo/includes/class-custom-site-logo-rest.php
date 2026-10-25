@@ -38,6 +38,22 @@ class Custom_Site_Logo_Rest {
 	const CLICKS_OPTION = 'csl_logo_click_stats';
 
 	/**
+	 * Mobile and desktop click totals.
+	 *
+	 * @since 2.1.0
+	 * @var   string
+	 */
+	const DEVICES_OPTION = 'csl_logo_click_devices';
+
+	/**
+	 * Click totals for each logo destination URL.
+	 *
+	 * @since 2.1.0
+	 * @var   string
+	 */
+	const TARGETS_OPTION = 'csl_logo_click_targets';
+
+	/**
 	 * How many days of click history to keep.
 	 *
 	 * @since 2.0.0
@@ -129,10 +145,11 @@ class Custom_Site_Logo_Rest {
 	 * stays a fixed, tiny size no matter how much traffic the site gets.
 	 *
 	 * @since 2.0.0
+	 * @param  WP_REST_Request $request Click payload. May include device and target.
 	 * @return WP_REST_Response
 	 */
-	public function record_click() {
-		if ( ! Custom_Site_Logo_Options::get( 'csl_CustomSiteLogo_click_tracking_field' ) ) {
+	public function record_click( WP_REST_Request $request ) {
+		if ( ! custom_site_logo_is_pro_active() || ! Custom_Site_Logo_Options::get( 'csl_CustomSiteLogo_click_tracking_field' ) ) {
 			return rest_ensure_response( array( 'recorded' => false ) );
 		}
 
@@ -168,6 +185,20 @@ class Custom_Site_Logo_Rest {
 		}
 
 		update_option( self::CLICKS_OPTION, $stats, false );
+
+		$device = sanitize_key( (string) $request->get_param( 'device' ) );
+
+		if ( ! in_array( $device, array( 'mobile', 'desktop' ), true ) ) {
+			$device = wp_is_mobile() ? 'mobile' : 'desktop';
+		}
+
+		self::increment_count( self::DEVICES_OPTION, $device, 2 );
+
+		$target = esc_url_raw( (string) $request->get_param( 'target' ) );
+
+		if ( $target ) {
+			self::increment_count( self::TARGETS_OPTION, $target, 50 );
+		}
 
 		return rest_ensure_response(
 			array(
@@ -226,5 +257,100 @@ class Custom_Site_Logo_Rest {
 		}
 
 		return $total;
+	}
+
+	/**
+	 * Clicks recorded on one site-local date.
+	 *
+	 * @since 2.1.0
+	 * @param  string $date Date in Y-m-d form.
+	 * @return int
+	 */
+	public static function get_clicks_on_date( $date ) {
+		$stats = get_option( self::CLICKS_OPTION, array() );
+
+		if ( ! is_array( $stats ) || ! isset( $stats[ $date ] ) ) {
+			return 0;
+		}
+
+		return (int) $stats[ $date ];
+	}
+
+	/**
+	 * The most recent days that have a recorded click, newest first.
+	 *
+	 * @since 2.1.0
+	 * @param  int $limit How many days to return.
+	 * @return array Date => count.
+	 */
+	public static function get_daily_clicks( $limit = 14 ) {
+		$stats = get_option( self::CLICKS_OPTION, array() );
+
+		if ( ! is_array( $stats ) || empty( $stats ) ) {
+			return array();
+		}
+
+		krsort( $stats );
+
+		return array_slice( $stats, 0, absint( $limit ), true );
+	}
+
+	/**
+	 * Mobile and desktop totals.
+	 *
+	 * @since 2.1.0
+	 * @return array
+	 */
+	public static function get_device_clicks() {
+		$stored = get_option( self::DEVICES_OPTION, array() );
+
+		return array(
+			'mobile'  => ( is_array( $stored ) && isset( $stored['mobile'] ) ) ? (int) $stored['mobile'] : 0,
+			'desktop' => ( is_array( $stored ) && isset( $stored['desktop'] ) ) ? (int) $stored['desktop'] : 0,
+		);
+	}
+
+	/**
+	 * The destinations clicked most often.
+	 *
+	 * @since 2.1.0
+	 * @param  int $limit How many destinations to return.
+	 * @return array URL => count.
+	 */
+	public static function get_target_clicks( $limit = 10 ) {
+		$stored = get_option( self::TARGETS_OPTION, array() );
+
+		if ( ! is_array( $stored ) || empty( $stored ) ) {
+			return array();
+		}
+
+		arsort( $stored );
+
+		return array_slice( $stored, 0, absint( $limit ), true );
+	}
+
+	/**
+	 * Add one to a counted map and keep only the largest entries.
+	 *
+	 * @since 2.1.0
+	 * @param string $option Option name.
+	 * @param string $key    Map key.
+	 * @param int    $limit  Maximum number of keys to keep.
+	 */
+	private static function increment_count( $option, $key, $limit ) {
+		$stored = get_option( $option, array() );
+
+		if ( ! is_array( $stored ) ) {
+			$stored = array();
+		}
+
+		$stored[ $key ] = isset( $stored[ $key ] ) ? (int) $stored[ $key ] + 1 : 1;
+
+		if ( count( $stored ) > $limit ) {
+			arsort( $stored );
+			$stored = array_slice( $stored, 0, $limit, true );
+		}
+
+		update_option( $option, $stored, false );
 	}
 }

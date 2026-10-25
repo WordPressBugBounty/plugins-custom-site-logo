@@ -14,8 +14,8 @@
  * @wordpress-plugin
  * Plugin Name:       Custom Site Logo
  * Plugin URI:        https://wordpress.org/plugins/custom-site-logo/
- * Description:       Show your logo anywhere: theme header, login screen, admin bar and emails. Retina, dark mode, mobile, sticky, scheduled and per-page logos.
- * Version:           2.0.0
+ * Description:       Show your logo anywhere: theme header, login screen, admin bar, and emails. Retina, dark mode, mobile, sticky, and per-page logos.
+ * Version:           2.1.0
  * Requires at least: 5.0
  * Requires PHP:      5.6
  * Author:            Awais Altaf
@@ -36,7 +36,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'CUSTOM_SITE_LOGO_VERSION', '2.0.0' );
+define( 'CUSTOM_SITE_LOGO_VERSION', '2.1.0' );
 
 /**
  * The code that runs during plugin activation.
@@ -64,6 +64,19 @@ register_deactivation_hook( __FILE__, 'custom_site_logo_deactivate' );
  * admin-specific hooks, and public-facing site hooks.
  */
 require plugin_dir_path( __FILE__ ) . 'includes/class-custom-site-logo.php';
+
+/**
+ * Whether Custom Site Logo Pro is active.
+ *
+ * Conditional rules, SEO, and analytics stay on the free plugin's settings
+ * screen, but they only take effect when Pro is active.
+ *
+ * @since 2.1.0
+ * @return bool
+ */
+function custom_site_logo_is_pro_active() {
+	return (bool) apply_filters( 'custom_site_logo_pro_active', false );
+}
 
 /**
  * Begins execution of the plugin.

@@ -94,8 +94,10 @@ class Custom_Site_Logo_Admin_Settings {
 			'csl_section_advanced'  => __( 'Advanced Logos', 'custom-site-logo' ),
 			'csl_section_sticky'    => __( 'Sticky Logo', 'custom-site-logo' ),
 			'csl_section_locations' => __( 'Display Locations', 'custom-site-logo' ),
+			'csl_section_login'     => __( 'Login & Registration', 'custom-site-logo' ),
 			'csl_section_rules'     => __( 'Conditional Rules', 'custom-site-logo' ),
 			'csl_section_seo'       => __( 'SEO & Performance', 'custom-site-logo' ),
+			'csl_section_analytics' => __( 'Analytics', 'custom-site-logo' ),
 		);
 	}
 
@@ -323,28 +325,6 @@ class Custom_Site_Logo_Admin_Settings {
 					'description' => __( 'Fills your theme\'s built-in logo slot, so you do not need the shortcode, block, widget, or template tag at all.', 'custom-site-logo' ),
 				),
 				array(
-					'key'         => 'csl_CustomSiteLogo_login_enabled_field',
-					'label'       => __( 'Login Screen Logo', 'custom-site-logo' ),
-					'type'        => 'toggle',
-					'toggle_text' => __( 'Replace the WordPress logo above the login form.', 'custom-site-logo' ),
-					'description' => __( 'The login logo also links to your site instead of wordpress.org.', 'custom-site-logo' ),
-				),
-				array(
-					'key'         => 'csl_CustomSiteLogo_login_image_field',
-					'label'       => __( 'Login Logo Image', 'custom-site-logo' ),
-					'type'        => 'image',
-					'description' => __( 'Optional. Leave empty to reuse the main logo.', 'custom-site-logo' ),
-				),
-				array(
-					'key'         => 'csl_CustomSiteLogo_login_width_field',
-					'label'       => __( 'Login Logo Width', 'custom-site-logo' ),
-					'type'        => 'number',
-					'min'         => 20,
-					'max'         => 320,
-					'suffix'      => 'px',
-					'description' => __( 'The height is worked out from your image so it never looks stretched.', 'custom-site-logo' ),
-				),
-				array(
 					'key'         => 'csl_CustomSiteLogo_admin_bar_field',
 					'label'       => __( 'Admin Bar Logo', 'custom-site-logo' ),
 					'type'        => 'toggle',
@@ -374,6 +354,30 @@ class Custom_Site_Logo_Admin_Settings {
 					'label'       => __( 'Print Logo Image', 'custom-site-logo' ),
 					'type'        => 'image',
 					'description' => __( 'Optional. A version suited to paper, e.g. solid black. Leave empty to print the main logo.', 'custom-site-logo' ),
+				),
+			),
+			'csl_section_login'     => array(
+				array(
+					'key'         => 'csl_CustomSiteLogo_login_enabled_field',
+					'label'       => __( 'Login Screen Logo', 'custom-site-logo' ),
+					'type'        => 'toggle',
+					'toggle_text' => __( 'Replace the WordPress logo on the login and registration screens.', 'custom-site-logo' ),
+					'description' => __( 'Also used on the lost-password screen. The logo links to your site instead of wordpress.org.', 'custom-site-logo' ),
+				),
+				array(
+					'key'         => 'csl_CustomSiteLogo_login_image_field',
+					'label'       => __( 'Login Logo Image', 'custom-site-logo' ),
+					'type'        => 'image',
+					'description' => __( 'Optional. Leave empty to reuse the main logo on the login and registration screens.', 'custom-site-logo' ),
+				),
+				array(
+					'key'         => 'csl_CustomSiteLogo_login_width_field',
+					'label'       => __( 'Login Logo Width', 'custom-site-logo' ),
+					'type'        => 'number',
+					'min'         => 20,
+					'max'         => 320,
+					'suffix'      => 'px',
+					'description' => __( 'The height is worked out from your image so it never looks stretched.', 'custom-site-logo' ),
 				),
 			),
 			'csl_section_rules'     => array(
@@ -473,6 +477,8 @@ class Custom_Site_Logo_Admin_Settings {
 					'toggle_text' => __( 'Publish the logo as Organization structured data.', 'custom-site-logo' ),
 					'description' => __( 'This is what search engines read to associate a logo with your site. Turn off if your SEO plugin already outputs it.', 'custom-site-logo' ),
 				),
+			),
+			'csl_section_analytics' => array(
 				array(
 					'key'         => 'csl_CustomSiteLogo_click_tracking_field',
 					'label'       => __( 'Track Logo Clicks', 'custom-site-logo' ),
@@ -482,7 +488,7 @@ class Custom_Site_Logo_Admin_Settings {
 				),
 				array(
 					'key'   => 'csl_click_stats',
-					'label' => __( 'Click Stats', 'custom-site-logo' ),
+					'label' => __( 'Reports', 'custom-site-logo' ),
 					'type'  => 'stats',
 				),
 			),
@@ -497,6 +503,10 @@ class Custom_Site_Logo_Admin_Settings {
 	private function register_declared_fields() {
 		foreach ( $this->get_declared_fields() as $section => $fields ) {
 			foreach ( $fields as $field ) {
+				if ( 'csl_CustomSiteLogo_network_default_field' === $field['key'] && ! is_multisite() ) {
+					continue;
+				}
+
 				add_settings_field(
 					$field['key'],
 					$field['label'],
@@ -566,7 +576,7 @@ class Custom_Site_Logo_Admin_Settings {
 				break;
 
 			case 'stats':
-				$this->render_click_stats();
+				self::render_analytics_panel();
 				break;
 		}
 
@@ -606,7 +616,8 @@ class Custom_Site_Logo_Admin_Settings {
 			</script>
 
 			<button type="button" class="button button-secondary csl-repeater-add">
-				<span class="dashicons dashicons-plus-alt2"></span> <?php esc_html_e( 'Add Row', 'custom-site-logo' ); ?>
+				<span class="csl-repeater-plus" aria-hidden="true">+</span>
+				<?php esc_html_e( 'Add Row', 'custom-site-logo' ); ?>
 			</button>
 		</div>
 		<?php
@@ -697,23 +708,133 @@ class Custom_Site_Logo_Admin_Settings {
 	}
 
 	/**
-	 * Show the recorded logo click totals.
+	 * Render the Pro analytics report.
 	 *
-	 * @since 2.0.0
+	 * The tracking toggle stays in the main settings form so it saves with
+	 * the other logo settings. The report itself is Pro-only.
+	 *
+	 * @since 2.1.0
 	 */
-	private function render_click_stats() {
-		$total  = Custom_Site_Logo_Rest::get_total_clicks();
-		$recent = Custom_Site_Logo_Rest::get_recent_clicks( 30 );
+	public static function render_analytics_panel() {
+		$tracking     = (int) Custom_Site_Logo_Options::get( 'csl_CustomSiteLogo_click_tracking_field' );
+		$today        = Custom_Site_Logo_Rest::get_clicks_on_date( current_time( 'Y-m-d' ) );
+		$week         = Custom_Site_Logo_Rest::get_recent_clicks( 7 );
+		$month        = Custom_Site_Logo_Rest::get_recent_clicks( 30 );
+		$total        = Custom_Site_Logo_Rest::get_total_clicks();
+		$days         = Custom_Site_Logo_Rest::get_daily_clicks( 14 );
+		$devices      = Custom_Site_Logo_Rest::get_device_clicks();
+		$targets      = Custom_Site_Logo_Rest::get_target_clicks();
+		$pages        = get_option( 'csl_pro_click_pages', array() );
+		$csv_url      = wp_nonce_url( admin_url( 'admin-post.php?action=csl_pro_csv' ), 'csl_pro_action' );
+		$peak         = $days ? max( $days ) : 1;
+		$device_total = (int) $devices['mobile'] + (int) $devices['desktop'];
+
+		if ( ! is_array( $pages ) ) {
+			$pages = array();
+		}
+
+		arsort( $pages );
+		$pages = array_slice( $pages, 0, 8, true );
+
+		$cards = array(
+			'today' => array( $today, __( 'Today', 'custom-site-logo' ) ),
+			'week'  => array( $week, __( 'Last 7 days', 'custom-site-logo' ) ),
+			'month' => array( $month, __( 'Last 30 days', 'custom-site-logo' ) ),
+			'total' => array( $total, __( 'All time', 'custom-site-logo' ) ),
+		);
 		?>
-		<div class="csl-stats">
-			<span class="csl-stat">
-				<strong><?php echo esc_html( number_format_i18n( $recent ) ); ?></strong>
-				<?php esc_html_e( 'clicks in the last 30 days', 'custom-site-logo' ); ?>
-			</span>
-			<span class="csl-stat">
-				<strong><?php echo esc_html( number_format_i18n( $total ) ); ?></strong>
-				<?php esc_html_e( 'clicks recorded in total', 'custom-site-logo' ); ?>
-			</span>
+		<div class="csl-analytics">
+			<div class="csl-analytics-toolbar">
+				<div>
+					<span class="csl-pro-badge"><?php esc_html_e( 'Pro', 'custom-site-logo' ); ?></span>
+					<label class="csl-toggle-field" for="csl_CustomSiteLogo_click_tracking_field">
+						<input type="hidden" name="csl_CustomSiteLogo_option_name[csl_CustomSiteLogo_click_tracking_field]" value="0" />
+						<input type="checkbox" id="csl_CustomSiteLogo_click_tracking_field" name="csl_CustomSiteLogo_option_name[csl_CustomSiteLogo_click_tracking_field]" value="1" <?php checked( $tracking, 1 ); ?> />
+						<span class="csl-toggle-switch" aria-hidden="true"></span>
+						<span><?php esc_html_e( 'Track logo clicks', 'custom-site-logo' ); ?></span>
+					</label>
+					<p class="description"><?php esc_html_e( 'Counts each click and sends a site_logo_click event to Google Analytics when gtag.js is present.', 'custom-site-logo' ); ?></p>
+				</div>
+				<a class="button" href="<?php echo esc_url( $csv_url ); ?>"><?php esc_html_e( 'Export CSV', 'custom-site-logo' ); ?></a>
+			</div>
+
+			<div class="csl-analytics-cards">
+				<?php foreach ( $cards as $card ) : ?>
+					<div class="csl-analytics-summary">
+						<strong><?php echo esc_html( number_format_i18n( $card[0] ) ); ?></strong>
+						<span><?php echo esc_html( $card[1] ); ?></span>
+					</div>
+				<?php endforeach; ?>
+			</div>
+
+			<div class="csl-analytics-grid">
+				<section class="csl-analytics-panel">
+					<h3><?php esc_html_e( 'Daily clicks', 'custom-site-logo' ); ?></h3>
+					<?php if ( $days ) : ?>
+						<ul class="csl-analytics-bars">
+							<?php foreach ( $days as $date => $count ) : ?>
+								<li>
+									<span class="csl-analytics-bar-label"><?php echo esc_html( date_i18n( 'M j', strtotime( $date ) ) ); ?></span>
+									<span class="csl-analytics-track" aria-hidden="true"><span style="width:<?php echo esc_attr( (string) max( 6, (int) round( ( $count / $peak ) * 100 ) ) ); ?>%;"></span></span>
+									<strong><?php echo esc_html( number_format_i18n( $count ) ); ?></strong>
+								</li>
+							<?php endforeach; ?>
+						</ul>
+					<?php else : ?>
+						<p class="description"><?php esc_html_e( 'Daily totals appear here after visitors click the logo.', 'custom-site-logo' ); ?></p>
+					<?php endif; ?>
+				</section>
+
+				<div class="csl-analytics-stack">
+					<section class="csl-analytics-panel">
+						<h3><?php esc_html_e( 'Devices', 'custom-site-logo' ); ?></h3>
+						<?php if ( $device_total ) : ?>
+							<div class="csl-analytics-split" aria-hidden="true">
+								<span class="is-mobile" style="width:<?php echo esc_attr( (string) round( ( $devices['mobile'] / $device_total ) * 100 ) ); ?>%;"></span>
+								<span class="is-desktop" style="width:<?php echo esc_attr( (string) round( ( $devices['desktop'] / $device_total ) * 100 ) ); ?>%;"></span>
+							</div>
+							<p class="csl-analytics-split-key">
+								<span><i class="is-mobile"></i><?php echo esc_html( sprintf( /* translators: %s: click count. */ __( 'Mobile %s', 'custom-site-logo' ), number_format_i18n( $devices['mobile'] ) ) ); ?></span>
+								<span><i class="is-desktop"></i><?php echo esc_html( sprintf( /* translators: %s: click count. */ __( 'Desktop %s', 'custom-site-logo' ), number_format_i18n( $devices['desktop'] ) ) ); ?></span>
+							</p>
+						<?php else : ?>
+							<p class="description"><?php esc_html_e( 'Mobile and desktop totals appear after the next tracked click.', 'custom-site-logo' ); ?></p>
+						<?php endif; ?>
+					</section>
+
+					<section class="csl-analytics-panel">
+						<h3><?php esc_html_e( 'Top pages', 'custom-site-logo' ); ?></h3>
+						<?php if ( $pages ) : ?>
+							<ol class="csl-analytics-rank">
+								<?php foreach ( $pages as $path => $count ) : ?>
+									<li>
+										<code><?php echo esc_html( $path ); ?></code>
+										<strong><?php echo esc_html( number_format_i18n( $count ) ); ?></strong>
+									</li>
+								<?php endforeach; ?>
+							</ol>
+						<?php else : ?>
+							<p class="description"><?php esc_html_e( 'Page totals appear here after tracked logo clicks.', 'custom-site-logo' ); ?></p>
+						<?php endif; ?>
+					</section>
+
+					<section class="csl-analytics-panel">
+						<h3><?php esc_html_e( 'Where the logo linked', 'custom-site-logo' ); ?></h3>
+						<?php if ( $targets ) : ?>
+							<ol class="csl-analytics-rank">
+								<?php foreach ( $targets as $url => $count ) : ?>
+									<li>
+										<code><?php echo esc_html( $url ); ?></code>
+										<strong><?php echo esc_html( number_format_i18n( $count ) ); ?></strong>
+									</li>
+								<?php endforeach; ?>
+							</ol>
+						<?php else : ?>
+							<p class="description"><?php esc_html_e( 'Destination totals appear here after tracked logo clicks.', 'custom-site-logo' ); ?></p>
+						<?php endif; ?>
+					</section>
+				</div>
+			</div>
 		</div>
 		<?php
 	}

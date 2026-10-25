@@ -360,10 +360,21 @@ class Custom_Site_Logo_Options {
 			$input = array();
 		}
 
+		$stored = get_option( self::OPTION_NAME, array() );
+
+		if ( ! is_array( $stored ) ) {
+			$stored = array();
+		}
+
 		$output = array();
 
 		foreach ( self::get_schema() as $key => $spec ) {
 			if ( ! isset( $input[ $key ] ) ) {
+				if ( ! custom_site_logo_is_pro_active() && self::is_pro_only_key( $key ) && array_key_exists( $key, $stored ) ) {
+					$output[ $key ] = call_user_func( $spec['sanitize'], $stored[ $key ] );
+					continue;
+				}
+
 				/*
 				 * A missing key means this payload never carried the setting at
 				 * all: the Customizer saves only what it manages, and an import
@@ -381,6 +392,11 @@ class Custom_Site_Logo_Options {
 		}
 
 		foreach ( self::get_repeater_schema() as $key => $subfields ) {
+			if ( ! isset( $input[ $key ] ) && ! custom_site_logo_is_pro_active() && self::is_pro_only_key( $key ) && isset( $stored[ $key ] ) ) {
+				$output[ $key ] = self::sanitize_repeater( $stored[ $key ], $subfields );
+				continue;
+			}
+
 			$output[ $key ] = self::sanitize_repeater( isset( $input[ $key ] ) ? $input[ $key ] : array(), $subfields );
 		}
 
@@ -465,5 +481,38 @@ class Custom_Site_Logo_Options {
 		$value = sanitize_text_field( (string) $value );
 
 		return preg_replace( '/[^A-Za-z0-9_\-]/', '', $value );
+	}
+
+	/**
+	 * Settings that belong to Conditional Rules or SEO & Performance.
+	 *
+	 * When Pro is not active those tabs are locked, so a save from another
+	 * tab must not wipe the stored values.
+	 *
+	 * @since 2.1.0
+	 * @param  string $key Option key.
+	 * @return bool
+	 */
+	private static function is_pro_only_key( $key ) {
+		$keys = array(
+			'csl_CustomSiteLogo_schedules_field',
+			'csl_CustomSiteLogo_conditions_field',
+			'csl_CustomSiteLogo_language_logos_field',
+			'csl_CustomSiteLogo_rotation_enabled_field',
+			'csl_CustomSiteLogo_rotation_images_field',
+			'csl_CustomSiteLogo_network_default_field',
+			'csl_CustomSiteLogo_link_disable_field',
+			'csl_CustomSiteLogo_link_new_tab_field',
+			'csl_CustomSiteLogo_link_nofollow_field',
+			'csl_CustomSiteLogo_title_text_field',
+			'csl_CustomSiteLogo_aria_label_field',
+			'csl_CustomSiteLogo_dimensions_field',
+			'csl_CustomSiteLogo_preload_field',
+			'csl_CustomSiteLogo_lazy_load_field',
+			'csl_CustomSiteLogo_schema_field',
+			'csl_CustomSiteLogo_click_tracking_field',
+		);
+
+		return in_array( $key, $keys, true );
 	}
 }
